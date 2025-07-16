@@ -1,10 +1,12 @@
 # CloudSniper - AWS Security & Cost Optimization Scanner
 
+## 🚀 Live Demo deployed link: astonishing-blancmange-9cb4f0.netlify.app
+
 ![CloudSniper Logo](https://img.shields.io/badge/CloudSniper-AWS%20Security%20Scanner-blue?style=for-the-badge&logo=amazon-aws)
 
 A production-ready web application that provides comprehensive AWS account security scanning and cost optimization insights using **AWS Lambda** as the core backend engine.
 
-## 🚀 Live Demo
+## 🚀 Live Demo deployed link: astonishing-blancmange-9cb4f0.netlify.app
 
 **Frontend**: [CloudSniper Web App](https://your-netlify-url.netlify.app)  
 **Backend**: AWS Lambda Function URL
