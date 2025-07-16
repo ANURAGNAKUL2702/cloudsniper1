@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  CloudSniper User Stack: IAM Role and Policies for CloudSniper scanning
+
+Resources:
+  CloudSniperUserRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CloudSniperUserRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: "*"  # Or your CloudSniper account ID for tighter security
+            Action: sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: CloudSniperReadOnlyPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ec2:Describe*
+                  - s3:List*
+                  - s3:Get*
+                  - elasticloadbalancing:Describe*
+                  - budgets:ViewBudget
+                  - pricing:GetProducts
+                  - iam:GetAccountSummary
+                  - iam:List*
+                Resource: "*"
+
+Outputs:
+  CloudSniperUserRoleArn:
+    Description: ARN of the CloudSniper IAM Role
+    Value: !GetAtt CloudSniperUserRole.Arn
