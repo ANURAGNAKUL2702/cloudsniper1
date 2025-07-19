@@ -4,11 +4,11 @@ on:
   push:
     branches: [main]
     paths:
-      - 'backend/**'
+      - '**.py'
       - '.github/workflows/test-backend.yml'
   pull_request:
     paths:
-      - 'backend/**'
+      - '**.py'
       - '.github/workflows/test-backend.yml'
   workflow_dispatch:
     inputs:
@@ -26,24 +26,23 @@ jobs:
       - name: ⬇️ Checkout Code
         uses: actions/checkout@v4
 
-      - name: 💾 Cache node_modules
-        uses: actions/cache@v4
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
         with:
-          path: backend/node_modules
-          key: ${{ runner.os }}-backend-${{ hashFiles('backend/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-backend-
+          python-version: '3.11'
 
       - name: 📦 Install Dependencies
-        run: npm install
-        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt || echo "⚠️ No requirements.txt found"
 
       - name: ✅ Run Tests
-        run: echo "backend tests here"
-        working-directory: backend
+        run: |
+          echo "No backend test command yet"
+          # python -m unittest discover  # uncomment this when you add tests
 
       - name: 🔁 Log Manual Retry Reason (if any)
         if: ${{ github.event_name == 'workflow_dispatch' }}
-        run: echo "🔁 Manual retry reason:${REASON}"
+        run: echo "🔁 Manual retry reason: $REASON"
         env:
           REASON: ${{ github.event.inputs.reason }}
