@@ -1,0 +1,49 @@
+name: 🧪 Test Frontend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/test-frontend.yml'
+  pull_request:
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/test-frontend.yml'
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Why are you retrying this workflow?"
+        required: false
+        default: "Manual retry - no reason given"
+
+jobs:
+  test:
+    name: 🧪 Frontend CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 💾 Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-frontend-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-frontend-
+
+      - name: 📦 Install Dependencies
+        run: npm install
+        working-directory: frontend
+
+      - name: ✅ Run Tests
+        run: echo "frontend tests here"
+        working-directory: frontend
+
+      - name: 🔁 Log Manual Retry Reason (if any)
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: echo "🔁 Manual retry reason:${REASON}"
+        env:
+          REASON: ${{ github.event.inputs.reason }}
