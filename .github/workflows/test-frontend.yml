@@ -4,11 +4,17 @@ on:
   push:
     branches: [main]
     paths:
-      - 'frontend/**'
+      - '**.ts'
+      - '**.tsx'
+      - '**/package.json'
+      - '**/package-lock.json'
       - '.github/workflows/test-frontend.yml'
   pull_request:
     paths:
-      - 'frontend/**'
+      - '**.ts'
+      - '**.tsx'
+      - '**/package.json'
+      - '**/package-lock.json'
       - '.github/workflows/test-frontend.yml'
   workflow_dispatch:
     inputs:
@@ -29,18 +35,16 @@ jobs:
       - name: 💾 Cache node_modules
         uses: actions/cache@v4
         with:
-          path: frontend/node_modules
-          key: ${{ runner.os }}-frontend-${{ hashFiles('frontend/package-lock.json') }}
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-frontend-
+            ${{ runner.os }}-node-
 
       - name: 📦 Install Dependencies
         run: npm install
-        working-directory: frontend
 
       - name: ✅ Run Tests
-        run: echo "frontend tests here"
-        working-directory: frontend
+        run: echo "Run your frontend tests here"
 
       - name: 🔁 Log Manual Retry Reason (if any)
         if: ${{ github.event_name == 'workflow_dispatch' }}
