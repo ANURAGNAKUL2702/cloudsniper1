@@ -43,6 +43,8 @@ jobs:
 
       - name: 🔁 Log Manual Retry Reason (if any)
         if: ${{ github.event_name == 'workflow_dispatch' }}
-        run: echo "🔁 Manual retry reason: $REASON"
+        run: |
+          echo "🔁 Manual retry reason: $REASON"
         env:
           REASON: ${{ github.event.inputs.reason }}
+
