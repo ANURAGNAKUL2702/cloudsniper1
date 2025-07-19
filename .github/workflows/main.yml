@@ -8,14 +8,16 @@ on:
       - '**.tsx'
       - 'package.json'
       - 'package-lock.json'
-      - '.github/workflows/test-frontend.yml'
+      - '.github/workflows/main.yml'
+
   pull_request:
     paths:
       - '**.ts'
       - '**.tsx'
       - 'package.json'
       - 'package-lock.json'
-      - '.github/workflows/test-frontend.yml'
+      - '.github/workflows/main.yml'
+
   workflow_dispatch:
     inputs:
       reason:
