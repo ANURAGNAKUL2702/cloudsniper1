@@ -38,8 +38,8 @@ jobs:
 
       - name: ✅ Run Tests
         run: |
-          echo "No backend test command yet"
-          # python -m unittest discover  # uncomment this when you add tests
+          echo "🧪 No backend test command yet"
+          # python -m unittest discover  # uncomment when tests are added
 
       - name: 🔁 Log Manual Retry Reason (if any)
         if: ${{ github.event_name == 'workflow_dispatch' }}
