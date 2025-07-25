@@ -1,4 +1,4 @@
-name: 🧪 Test Backend
+name:  Test Backend
 
 on:
   push:
@@ -19,32 +19,32 @@ on:
 
 jobs:
   test:
-    name: 🧪 Backend CI
+    name:  Backend CI
     runs-on: ubuntu-latest
 
     steps:
-      - name: ⬇️ Checkout Code
+      - name: ⬇ Checkout Code
         uses: actions/checkout@v4
 
-      - name: 🐍 Set up Python
+      - name:  Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: 📦 Install Dependencies
+      - name:  Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt || echo "⚠️ No requirements.txt found"
 
-      - name: ✅ Run Tests
+      - name:  Run Tests
         run: |
-          echo "🧪 No backend test command yet"
+          echo " No backend test command yet"
           # python -m unittest discover  # uncomment when tests are added
 
-      - name: 🔁 Log Manual Retry Reason (if any)
+      - name: Log Manual Retry Reason (if any)
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
-          echo "🔁 Manual retry reason: $REASON"
+          echo "Manual retry reason: $REASON"
         env:
           REASON: ${{ github.event.inputs.reason }}
 
