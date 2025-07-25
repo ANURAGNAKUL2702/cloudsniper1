@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - '**.ts'
-      - '**.tsx'
+      - '**.tsx'    
       - '**/package.json'
       - '**/package-lock.json' 
       - '.github/workflows/test-frontend.yml'
