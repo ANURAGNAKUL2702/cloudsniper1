@@ -25,14 +25,14 @@ on:
 
 jobs:
   test:
-    name: 🧪 Frontend CI
+    name:  Frontend CI
     runs-on: ubuntu-latest
 
     steps:
-      - name: ⬇️ Checkout Code
+      - name:  Checkout Code
         uses: actions/checkout@v4
 
-      - name: 💾 Cache node_modules
+      - name:  Cache node_modules
         uses: actions/cache@v4
         with:
           path: node_modules
@@ -40,14 +40,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: 📦 Install Dependencies
+      - name: Install Dependencies
         run: npm install
 
-      - name: ✅ Run Tests
+      - name: Run Tests
         run: echo "Run your frontend tests here"
 
-      - name: 🔁 Log Manual Retry Reason (if any)
+      - name:  Log Manual Retry Reason (if any)
         if: ${{ github.event_name == 'workflow_dispatch' }}
-        run: echo "🔁 Manual retry reason:${REASON}"
-        env:
+        run: echo " Manual retry reason:${REASON}"
+        env: 
           REASON: ${{ github.event.inputs.reason }}
