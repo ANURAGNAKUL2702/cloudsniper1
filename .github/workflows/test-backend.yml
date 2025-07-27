@@ -9,7 +9,7 @@ on:
   pull_request:
     paths:
       - '**.py' 
-      - '.github/workflows/test-backend.yml'
+      - '.github/workflows/test-backend.yml' 
   workflow_dispatch:
     inputs:
       reason:
