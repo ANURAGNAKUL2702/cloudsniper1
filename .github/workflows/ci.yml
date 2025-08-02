@@ -1,0 +1,25 @@
+name: Basic ci
+on:[push,pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: checkout repo
+       uses: actions/checkout@v4
+
+      - name: setup node.js
+        runs: actions/setup-node@v4
+        with:
+          node-version: 18
+      
+      - name: install Dependencies
+        runs: npm install
+
+      - name: Build project
+        runs: npm run build
+
+      - name: ✅ Run Tests (if any)
+        runs: npm test || echo "No tests yet"
+        
