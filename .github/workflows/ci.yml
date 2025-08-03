@@ -1,0 +1,70 @@
+name: 🔁 Fullstack Lint & Test
+
+on:
+  push:
+    paths:
+      - '**.ts'
+      - '**.py'
+      - '**.html'
+      - '**.css'
+      - '**.js'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint-typescript:
+    name: 🧹 Lint TypeScript
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install deps
+        run: npm install
+      - name: Lint TS
+        run: npx eslint . --ext .ts,.tsx
+
+  lint-python:
+    name: 🐍 Lint Python
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install flake8
+        run: pip install flake8
+      - name: Lint Python files
+        run: flake8 .
+
+  lint-html-css:
+    name: 🌐 Lint HTML & CSS
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install HTMLHint
+        run: npm install -g htmlhint
+      - name: Lint HTML
+        run: htmlhint '**/*.html'
+      - name: Lint CSS (stylelint)
+        run: |
+          npm install -g stylelint stylelint-config-standard
+          stylelint "**/*.css"
+
+  lint-js:
+    name: 🧹 Lint JS (Optional)
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'workflow_dispatch' }}  # only runs on push/PR
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install ESLint
+        run: npm install
+      - name: Lint JS
+        run: npx eslint . --ext .js
