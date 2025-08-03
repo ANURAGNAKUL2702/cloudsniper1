@@ -33,7 +33,8 @@ jobs:
       - name: 🛠️ Run ESLint with Auto-Fix
         run: |
           echo "🔍 Running ESLint with auto-fix..."
-          npx eslint . --fix || true
+          npx eslint . --ext .ts,.tsx --fix || true
+
 
 
 
