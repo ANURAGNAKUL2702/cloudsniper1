@@ -30,8 +30,12 @@ jobs:
       - name: 📦 Install Node.js dependencies
         run: npm ci
 
-      - name: 🧹 Run ESLint (new config format)
-        run: npx eslint . || true
+      - name: 🛠️ Run ESLint with Auto-Fix
+        if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+        run: |
+          echo "🔍 Running ESLint with auto-fix..."
+          npx eslint . --fix || true
+
 
 
       - name: ⚙️ Type Check
