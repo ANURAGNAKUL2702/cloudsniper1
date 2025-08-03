@@ -30,8 +30,9 @@ jobs:
       - name: 📦 Install Node.js dependencies
         run: npm ci
 
-      - name: 🧹 Run ESLint
-        run: npx eslint . --ext .ts,.tsx || true
+      - name: 🧹 Run ESLint (new config format)
+        run: npx eslint . || true
+
 
       - name: ⚙️ Type Check
         run: npx tsc --noEmit || true
