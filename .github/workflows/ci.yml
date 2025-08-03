@@ -1,6 +1,6 @@
 name: 🌐 Fullstack CI Check
 
-on:
+on: 
   push:
     paths:
       - '**/*.ts'
