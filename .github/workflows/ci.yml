@@ -47,9 +47,13 @@ jobs:
           python-version: '3.11'
 
       - name: 📦 Install Python dependencies if requirements.txt exists
-        if: ${{ hashFiles('requirements.txt') != '' }}
         run: |
+          if [ -f requirements.txt ]; then
           pip install -r requirements.txt
+          else
+          echo "requirements.txt not found, skipping install"
+          fi
+
 
 
       - name: 🧪 Run Python Test (lambda_function.py)
