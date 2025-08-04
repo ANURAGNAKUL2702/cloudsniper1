@@ -56,14 +56,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      - name: 📦 Install Python dependencies if requirements.txt exists
+      - name: 📦 Install Python dependencies
         run: |
-          if [ -f requirements.txt ]; then
-            python -m pip install --upgrade pip
-            pip install -r requirements.txt
+          FILE=$(find . -name "requirements.txt" | head -n 1)
+          if [[ -f "$FILE" ]]; then
+          echo "📦 Found $FILE. Installing dependencies from $FILE..."
+          python -m pip install --upgrade pip
+          pip install --cache-dir ~/.cache/pip -r "$FILE"
           else
-            echo "requirements.txt not found, skipping install"
+          echo "❌ No requirements.txt found. Skipping pip install."
           fi
+
 
       - name: 🧪 Run Python Test (lambda_function.py)
         if: hashFiles('lambda_function.py') != ''
