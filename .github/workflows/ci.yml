@@ -28,15 +28,6 @@ jobs:
           node-version: '18'
           cache: 'npm'
 
-      - name: ♻️ Restore npm cache
-        if: hashFiles('**/package-lock.json') != ''
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
-
       - name: 📦 Install Node.js dependencies
         if: hashFiles('**/package-lock.json') != ''
         run: npm ci
@@ -77,3 +68,4 @@ jobs:
       - name: 🧪 Run Python Test (lambda_function.py)
         if: hashFiles('lambda_function.py') != ''
         run: python lambda_function.py || true
+
