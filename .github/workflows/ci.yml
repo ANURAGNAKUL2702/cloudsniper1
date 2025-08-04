@@ -21,32 +21,42 @@ jobs:
       - name: 🛎️ Checkout code
         uses: actions/checkout@v4
 
+      # ────── Node Setup ────── #
       - name: 🟨 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
 
+      - name: ♻️ Restore npm cache
+        if: hashFiles('**/package-lock.json') != ''
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
       - name: 📦 Install Node.js dependencies
+        if: hashFiles('**/package-lock.json') != ''
         run: npm ci
 
       - name: 🛠️ Run ESLint with Auto-Fix
+        if: hashFiles('**/*.ts', '**/*.js', '**/*.tsx') != ''
         run: |
           echo "🔍 Running ESLint with auto-fix..."
           npx eslint . --fix || true
 
-
-
-
-
-
-      - name: ⚙️ Type Check
+      - name: ⚙️ TypeScript Type Check
+        if: hashFiles('tsconfig.json') != ''
         run: npx tsc --noEmit || true
 
+      # ────── Python Setup ────── #
       - name: 🐍 Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
       - name: ♻️ Restore pip cache
         uses: actions/cache@v4
         with:
@@ -58,13 +68,12 @@ jobs:
       - name: 📦 Install Python dependencies if requirements.txt exists
         run: |
           if [ -f requirements.txt ]; then
-          pip install -r requirements.txt
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
           else
-          echo "requirements.txt not found, skipping install"
+            echo "requirements.txt not found, skipping install"
           fi
 
-
-
       - name: 🧪 Run Python Test (lambda_function.py)
-        if: ${{ hashFiles('lambda_function.py') != '' }}
+        if: hashFiles('lambda_function.py') != ''
         run: python lambda_function.py || true
