@@ -28,6 +28,15 @@ jobs:
           node-version: '18'
           cache: 'npm'
 
+      - name: ♻️ Restore npm cache
+        if: hashFiles('**/package-lock.json') != ''
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
       - name: 📦 Install Node.js dependencies
         if: hashFiles('**/package-lock.json') != ''
         run: npm ci
@@ -48,6 +57,9 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: 🗂️ Ensure pip cache dir exists
+        run: mkdir -p ~/.cache/pip
+
       - name: ♻️ Restore pip cache
         uses: actions/cache@v4
         with:
@@ -65,7 +77,9 @@ jobs:
             echo "requirements.txt not found, skipping install"
           fi
 
+      - name: 🔍 Debug pip cache contents
+        run: ls -R ~/.cache/pip || echo "No pip cache found"
+
       - name: 🧪 Run Python Test (lambda_function.py)
         if: hashFiles('lambda_function.py') != ''
         run: python lambda_function.py || true
-
