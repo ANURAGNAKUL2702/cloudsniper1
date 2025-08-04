@@ -28,15 +28,6 @@ jobs:
           node-version: '18'
           cache: 'npm'
 
-      - name: ♻️ Restore npm cache
-        if: hashFiles('**/package-lock.json') != ''
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
-
       - name: 📦 Install Node.js dependencies
         if: hashFiles('**/package-lock.json') != ''
         run: npm ci
@@ -57,11 +48,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: 🗂️ Ensure pip cache dir exists
-        run: mkdir -p ~/.cache/pip
-
       - name: ♻️ Restore pip cache
-        if: hashFiles('**/requirements.txt') != ''
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
@@ -69,15 +56,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      - name: 📦 Install Python dependencies
-        if: hashFiles('**/requirements.txt') != ''
+      - name: 📦 Install Python dependencies if requirements.txt exists
         run: |
-          echo "Installing pip packages..."
-          python -m pip install --upgrade pip
-          pip install --cache-dir ~/.cache/pip -r requirements.txt || echo "❌ Failed installing pip packages"
-
-      - name: 🔍 Debug pip cache contents
-        run: du -sh ~/.cache/pip || echo "No pip cache found"
+          if [ -f requirements.txt ]; then
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+          else
+            echo "requirements.txt not found, skipping install"
+          fi
 
       - name: 🧪 Run Python Test (lambda_function.py)
         if: hashFiles('lambda_function.py') != ''
