@@ -33,25 +33,17 @@ jobs:
           python-version: '3.11'
 
       # -------------------------- Caching -------------------------------
-      - name: 🧠 Cache Node Modules
-        if: ${{ hashFiles('**/package-lock.json') != '' }}
-        uses: actions/cache@v4
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: 🧠 Cache Python Dependencies
-        if: ${{ hashFiles('**/requirements.txt') != '' }}
+      - name: 🧠 Restore cache
         uses: actions/cache@v4
         with:
           path: |
-            ~/.cache/pip
+            node_modules
             venv
-            key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+            key: ${{ runner.os }}-cache-${{ hashFiles('package-lock.json', 'requirements.txt') }}
             restore-keys: |
-            ${{ runner.os }}-pip-
+            ${{ runner.os }}-cache-
+
+
 
       # -------------------- Install Dependencies ------------------------
       - name: ☕ Install Java Dependencies (Maven)
