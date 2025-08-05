@@ -35,6 +35,7 @@ jobs:
       # -------------------------- Caching -------------------------------
       - name: 🧠 Restore cache
         if: ${{ hashFiles('package-lock.json', 'requirements.txt') != '' }}
+        id: cache-restore
         uses: actions/cache@v4
         with:
           path: |
@@ -44,6 +45,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cache-
 
+      - name: 💾 Save cache if not found
+        if: ${{ steps.cache-restore.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            node_modules
+            venv
+          key: ${{ runner.os }}-cache-${{ hashFiles('package-lock.json', 'requirements.txt') }}
+
       # -------------------- Install Dependencies ------------------------
       - name: ☕ Install Java Dependencies (Maven)
         run: |
@@ -52,7 +62,7 @@ jobs:
           echo "☕ Found pom.xml in $dir"
           cd "$dir"
           mvn install -DskipTests || echo "⚠️ mvn install failed in $dir"
-          cd ..
+          cd .. 
           fi
           done
 
