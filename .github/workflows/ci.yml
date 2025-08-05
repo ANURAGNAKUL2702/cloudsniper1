@@ -52,27 +52,28 @@ jobs:
             ${{ runner.os }}-pip-
 
       # -------------------- Install Dependencies ------------------------
-      - name: 📦 Install Node.js Dependencies
+      - name: ☕ Install Java Dependencies (Maven)
         run: |
           for dir in */; do
-            if [ -f "$dir/package.json" ]; then
-              echo "📁 Found package.json in $dir"
-              cd "$dir"
-              npm ci || echo "⚠️ npm ci failed in $dir"
-              cd ..
-            fi
+          if [ -f "$dir/pom.xml" ]; then
+          echo "☕ Found pom.xml in $dir"
+          cd "$dir"
+          mvn install -DskipTests || echo "⚠️ mvn install failed in $dir"
+          cd ..
+          fi
           done
 
-      - name: 🐍 Install Python Dependencies
-        if: ${{ hashFiles('**/requirements.txt') != '' }}
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
 
-      - name: ☕ Install Java Dependencies (Maven)
-        if: ${{ hashFiles('**/pom.xml') != '' }}
+      - name: 🐍 Install Python Dependencies
         run: |
-          mvn install -DskipTests
+          for dir in */; do
+          if [ -f "$dir/requirements.txt" ]; then
+          echo "📁 Found requirements.txt in $dir"
+          python -m pip install --upgrade pip
+          pip install -r "$dir/requirements.txt" || echo "⚠️ pip install failed in $dir"
+          fi
+          done
+
 
       # --------------------- Folder Summary ------------------------------
       - name: 📂 List All Project Folders
