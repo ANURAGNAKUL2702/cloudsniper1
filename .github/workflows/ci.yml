@@ -34,17 +34,15 @@ jobs:
 
       # -------------------------- Caching -------------------------------
       - name: 🧠 Restore cache
+        if: ${{ hashFiles('package-lock.json', 'requirements.txt') != '' }}
         uses: actions/cache@v4
         with:
           path: |
             node_modules
             venv
-            key: ${{ runner.os }}-cache-${{ hashFiles('package-lock.json', 'requirements.txt') }}
-            restore-keys: |
+          key: ${{ runner.os }}-cache-${{ hashFiles('package-lock.json', 'requirements.txt') }}
+          restore-keys: |
             ${{ runner.os }}-cache-
-
-
-
 
       # -------------------- Install Dependencies ------------------------
       - name: ☕ Install Java Dependencies (Maven)
@@ -58,7 +56,6 @@ jobs:
           fi
           done
 
-
       - name: 🐍 Install Python Dependencies
         run: |
           for dir in */; do
@@ -68,7 +65,6 @@ jobs:
           pip install -r "$dir/requirements.txt" || echo "⚠️ pip install failed in $dir"
           fi
           done
-
 
       # --------------------- Folder Summary ------------------------------
       - name: 📂 List All Project Folders
