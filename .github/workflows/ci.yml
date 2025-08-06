@@ -11,7 +11,7 @@ jobs:
     name: 🧪 Setup & Check Folder Structure
     runs-on: ubuntu-latest
 
-    steps:
+    steps: 
       - name: 📥 Checkout Repository
         uses: actions/checkout@v4
 
