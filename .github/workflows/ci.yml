@@ -2,12 +2,15 @@ name: CI
 
 on:
   push:
- 
-jobs: 
-  fail-job:    
-    runs-on: ubuntu-latest    
-    steps: 
-      - name: Force failure    
-        run: | 
-          echo "Forcing failure for n8n agent test" 
-          exit 1
+    branches:
+      - main
+
+jobs:
+  fail-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show environment
+        run: echo "Running CI on GitHub Actions"
+
+      - name: Force failure (for webhook testing)
+        run: exit 1
