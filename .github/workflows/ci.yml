@@ -111,3 +111,4 @@ jobs:
           pip install autopep8
           echo " Running autopep8 to fix Python code"
           autopep8 . --in-place --recursive || echo " Python linting failed"
+          - run: exit 1
