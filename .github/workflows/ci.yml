@@ -6,7 +6,7 @@ on:
       - main 
 
 jobs: 
-  fail-job:
+  fail-job: 
     runs-on: ubuntu-latest
     steps: 
       - name: Show environment
