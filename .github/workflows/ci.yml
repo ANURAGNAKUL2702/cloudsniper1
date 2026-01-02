@@ -8,6 +8,6 @@ jobs:
     runs-on: ubuntu-latest   
     steps:
       - name: Force failure
-        run: |
+        run: | 
           echo "Forcing failure for n8n agent test" 
           exit 1
