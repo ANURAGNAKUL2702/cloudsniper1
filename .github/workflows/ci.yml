@@ -1,116 +1,13 @@
-name: 🚀 Real-World CI Setup
+name: CI
 
 on:
   push:
-    branches: [main, dev] 
-  pull_request:
-    branches: [main]  
 
-jobs: 
-  setup-and-check:
-    name: Setup & Check Folder Structure
+jobs:
+  fail-job:
     runs-on: ubuntu-latest
-
-    steps: 
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v4
-
-      # ------------------------- Setup Languages ------------------------
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name:  Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name:  Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      # -------------------------- Caching -------------------------------
-      - name:  Restore cache
-        if: ${{ hashFiles('package-lock.json', 'requirements.txt') != '' }}
-        id: cache-restore
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            venv
-          key: ${{ runner.os }}-cache-${{ hashFiles('package-lock.json', 'requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-cache-
-
-      - name:  Save cache if not found
-        if: ${{ steps.cache-restore.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@v4
-        with:
-          path: |
-            node_modules
-            venv
-          key: ${{ runner.os }}-cache-${{ hashFiles('package-lock.json', 'requirements.txt') }}
-
-      # -------------------- Install Dependencies ------------------------
-      - name:  Install Java Dependencies (Maven)
+    steps:
+      - name: Force failure
         run: |
-          for dir in */; do
-          if [ -f "$dir/pom.xml" ]; then
-          echo " Found pom.xml in $dir"
-          cd "$dir"
-          mvn install -DskipTests || echo " mvn install failed in $dir"
-          cd .. 
-          fi
-          done
-
-      - name:  Install Python Dependencies
-        run: |
-          for dir in */; do
-          if [ -f "$dir/requirements.txt" ]; then
-          echo " Found requirements.txt in $dir"
-          python -m pip install --upgrade pip
-          pip install -r "$dir/requirements.txt" || echo " pip install failed in $dir"
-          fi
-          done
-
-      # --------------------- Folder Summary ------------------------------
-      - name:  List All Project Folders
-        run: |
-          echo " Project folder structure:"
-          tree -L 2 || ls -R
-
-      - name:  Save Git Commit Info
-        run: |
-          echo " Commit: ${{ github.sha }}"
-          echo " Author: ${{ github.actor }}"
-          echo " Branch: ${{ github.ref }}"
-
-      # ------------------- Lint with Auto-Fix ----------------------------
-      - name: 🧹 Lint Node.js Projects (Auto-Fix)
-        run: |
-          for dir in frontend backend; do
-            echo " Checking $dir for ESLint config..."
-            if [ -f "$dir/.eslintrc.json" ] || [ -f "$dir/.eslintrc.js" ]; then
-              echo " ESLint config found in $dir"
-              cd "$dir"
-              npm install eslint --save-dev
-              npx eslint . --ext .js,.jsx,.ts,.tsx --fix || echo "⚠️ Linting failed"
-              cd ..
-            else
-              echo " No ESLint config in $dir. Skipping..."
-            fi
-          done
-
-      - name:  Lint Python Code with Auto-Fix
-        if: ${{ hashFiles('**/*.py') != '' }}
-        run: |
-          echo " Installing autopep8 for Python linting"
-          pip install autopep8
-          echo " Running autopep8 to fix Python code"
-          autopep8 . --in-place --recursive || echo " Python linting failed"
-        - name: FORCE FAILURE
-           run: exit 1
-
+          echo "Forcing failure for n8n agent test"
+          exit 1
