@@ -6,7 +6,7 @@ on:
 jobs: 
   fail-job:    
     runs-on: ubuntu-latest    
-    steps:
+    steps: 
       - name: Force failure    
         run: | 
           echo "Forcing failure for n8n agent test" 
