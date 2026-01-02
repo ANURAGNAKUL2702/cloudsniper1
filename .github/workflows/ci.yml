@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [main]
 
-jobs:
+jobs: 
   setup-and-check:
     name: Setup & Check Folder Structure
     runs-on: ubuntu-latest
