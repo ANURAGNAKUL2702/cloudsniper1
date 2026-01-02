@@ -9,5 +9,5 @@ jobs:
     steps:
       - name: Force failure
         run: |
-          echo "Forcing failure for n8n agent test"
+          echo "Forcing failure for n8n agent test" 
           exit 1
