@@ -8,7 +8,7 @@ on:
 jobs:
   fail-job:
     runs-on: ubuntu-latest
-    steps:
+    steps: 
       - name: Show environment
         run: echo "Running CI on GitHub Actions"
 
