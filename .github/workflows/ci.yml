@@ -19,7 +19,7 @@ jobs:
       - name: Notify AutoFix (only if CI fails)
         if: failure()
         run: |
-          curl -X POST https://anuragnakul.app.n8n.cloud/webhook/ci-alert \
+          curl -X POST https://anuragnakul.app.n8n.cloud/webhook/basic-test \
             -H "Content-Type: application/json" \
             -d '{
               "repo": "'"${GITHUB_REPOSITORY}"'",
