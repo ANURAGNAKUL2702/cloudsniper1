@@ -8,7 +8,7 @@ A production-ready web application that provides comprehensive AWS account secur
 
 ## 🚀 Live Demo deployed link: astonishing-blancmange-9cb4f0.netlify.app
 
-**Frontend**: [CloudSniper Web App](https://your-netlify-url.netlify.app)  
+**Frontend**: [CloudSniper Web App](https://astonishing-blancmange-9cb4f0.netlify.app)  
 **Backend**: AWS Lambda Function URL
 
 ## 📋 Table of Contents
