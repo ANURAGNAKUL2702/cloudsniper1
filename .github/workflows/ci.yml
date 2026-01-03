@@ -1,16 +1,30 @@
 name: CI
 
 on:
-  push: 
-    branches: 
-      - main 
+  push:
+  pull_request:
 
-jobs: 
-  fail-job:  
+jobs:
+  test:
     runs-on: ubuntu-latest
-    steps: 
-      - name: Show environment
-        run: echo "Running CI on GitHub Actions"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Force failure (for webhook testing)
-        run: exit 1
+      - name: Run tests (force failure)
+        run: |
+          echo "Simulating CI failure"
+          exit 1
+
+      - name: Notify AutoFix (only if CI fails)
+        if: failure()
+        run: |
+          curl -X POST https://anuragnakul.app.n8n.cloud/webhook/ci-alert \
+            -H "Content-Type: application/json" \
+            -d '{
+              "repo": "'"${GITHUB_REPOSITORY}"'",
+              "run_id": "'"${GITHUB_RUN_ID}"'",
+              "sha": "'"${GITHUB_SHA}"'",
+              "ref": "'"${GITHUB_REF}"'",
+              "status": "failed"
+            }'
