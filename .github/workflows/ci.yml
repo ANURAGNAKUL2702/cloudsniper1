@@ -1,24 +1,195 @@
-name: CloudSniper CI
+name: CloudSniper CI/CD Pipeline
 
-# Continuous Integration workflow for CloudSniper project
+# Production-grade CI/CD pipeline with intentional test failures
 on:
   push:
-  pull_request:      
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
 
-jobs:  
-  test:     
-    runs-on: ubuntu-latest     
-    steps: 
-      - name: Checkout  
-        uses: actions/checkout@v4 
+env:
+  NODE_VERSION: '18.x'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
-      - name: Run tests (force failure)
+jobs:
+  # Code Quality & Security Checks
+  quality-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Check TypeScript compilation
+        run: npx tsc --noEmit
+
+      - name: Run security audit (INTENTIONAL FAILURE)
         run: |
-          echo "Simulating CI failure"
+          echo "Running security audit..."
+          npm audit --audit-level=high
+          echo "Critical security vulnerability detected!"
           exit 1
 
-      - name: Notify AutoFix (only if CI fails)
-        if: failure()
+  # Build & Test Pipeline
+  build-and-test:
+    runs-on: ubuntu-latest
+    needs: quality-gate
+    if: always()
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests (BROKEN)
+        run: |
+          echo "Running comprehensive test suite..."
+          npm run test
+          echo "Test failure: Database connection timeout"
+          exit 1
+
+      - name: Build application
+        run: npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-files-${{ matrix.node-version }}
+          path: dist/
+          retention-days: 7
+
+  # Performance & Load Testing
+  performance-tests:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: always()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for performance testing
+        run: npm run build
+
+      - name: Run Lighthouse CI (BROKEN CONFIG)
+        run: |
+          echo "Running Lighthouse performance tests..."
+          echo "Performance score below threshold: 45/100"
+          echo "Largest Contentful Paint: 8.5s (threshold: 2.5s)"
+          exit 1
+
+  # Container Build & Security Scan
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: always()
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build Docker image (MISSING DOCKERFILE)
+        run: |
+          echo "Building production Docker image..."
+          docker build -t cloudsniper:latest .
+          echo "Error: Dockerfile not found in repository root"
+          exit 1
+
+  # Deployment Pipeline
+  deploy-staging:
+    runs-on: ubuntu-latest
+    needs: [quality-gate, build-and-test, docker-build]
+    if: github.ref == 'refs/heads/main' && always()
+    environment: staging
+    steps:
+      - name: Deploy to Staging (BROKEN CREDENTIALS)
+        run: |
+          echo "Deploying to staging environment..."
+          echo "Connecting to AWS Lambda..."
+          echo "Error: Invalid AWS credentials or insufficient permissions"
+          echo "Deployment Status: FAILED"
+          exit 1
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    if: github.ref == 'refs/heads/main' && success()
+    environment: production
+    steps:
+      - name: Deploy to Production
+        run: |
+          echo "Production deployment would happen here..."
+          echo "This step should never run due to upstream failures"
+
+  # Notification & AutoFix Integration
+  notify-autofix:
+    runs-on: ubuntu-latest
+    needs: [quality-gate, build-and-test, performance-tests, docker-build, deploy-staging]
+    if: always() && (failure() || cancelled())
+    steps:
+      - name: Collect failure information
+        id: failures
+        run: |
+          echo "failed_jobs<<EOF" >> $GITHUB_OUTPUT
+          echo "Quality Gate: ${{ needs.quality-gate.result }}" >> $GITHUB_OUTPUT
+          echo "Build & Test: ${{ needs.build-and-test.result }}" >> $GITHUB_OUTPUT
+          echo "Performance: ${{ needs.performance-tests.result }}" >> $GITHUB_OUTPUT
+          echo "Docker Build: ${{ needs.docker-build.result }}" >> $GITHUB_OUTPUT
+          echo "Staging Deploy: ${{ needs.deploy-staging.result }}" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Trigger AutoFix System
         run: |
           curl -X POST https://anuragnakul.app.n8n.cloud/webhook/basic-test \
             -H "Content-Type: application/json" \
@@ -27,5 +198,9 @@ jobs:
               "run_id": "'"${GITHUB_RUN_ID}"'",
               "sha": "'"${GITHUB_SHA}"'",
               "ref": "'"${GITHUB_REF}"'",
-              "status": "failed"
+              "status": "failed",
+              "workflow": "production-pipeline",
+              "failed_jobs": "'"${{ steps.failures.outputs.failed_jobs }}"'",
+              "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'",
+              "actor": "'"${GITHUB_ACTOR}"'"
             }'
