@@ -10,6 +10,7 @@ export default defineConfig({
     exclude: ['lucide-react'],
   },
   server: {
+    // Proxy API requests to AWS Lambda
     proxy: {
       '/api': {
         target: 'https://tczswboifjsccnvhzq2vng2xm40kmrfb.lambda-url.ap-south-1.on.aws',
