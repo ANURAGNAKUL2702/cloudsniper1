@@ -6,6 +6,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   optimizeDeps: {
+    // Exclude lucide-react from pre-bundling for better development experience
     exclude: ['lucide-react'],
   },
   server: {

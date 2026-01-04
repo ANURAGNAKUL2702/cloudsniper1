@@ -11,7 +11,7 @@ env:
   NODE_VERSION: '18.x'
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-
+     
 jobs:
   # Code Quality & Security Checks
   quality-gate:

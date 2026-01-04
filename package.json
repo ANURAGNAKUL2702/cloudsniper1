@@ -1,8 +1,8 @@
 {
   "name": "cloudsniper",
-  "description": "AWS Security & Cost Optimization Scanner",
+  "description": "AWS Security & Cost Optimization Scanner - Production Ready",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
