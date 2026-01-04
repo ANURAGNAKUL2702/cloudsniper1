@@ -6,6 +6,7 @@ export default {
     './src/**/*.{js,ts,jsx,tsx}'
   ],
   theme: {
+    // Extend default theme with custom values
     extend: {},
   },
   plugins: [],
