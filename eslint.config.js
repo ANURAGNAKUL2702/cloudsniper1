@@ -4,7 +4,10 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 
-// ESLint configuration for CloudSniper project
+/**
+ * ESLint configuration for CloudSniper project
+ * Configured for React + TypeScript development
+ */
 export default tseslint.config(
   { ignores: ['dist'] },
   {
