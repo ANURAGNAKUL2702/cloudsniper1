@@ -1,9 +1,10 @@
 {
   "name": "cloudsniper",
   "description": "AWS Security & Cost Optimization Scanner - Production Ready",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "license": "MIT",
   "author": "CloudSniper Team",
+  "homepage": "https://astonishing-blancmange-9cb4f0.netlify.app",
   "keywords": ["aws", "security", "scanner", "optimization"],
   "private": true,
   "type": "module",
