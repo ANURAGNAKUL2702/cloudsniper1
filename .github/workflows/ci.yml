@@ -1,8 +1,8 @@
-name: CI
+name: CloudSniper CI
 
 on:
   push:
-  pull_request:
+  pull_request:      
 
 jobs:  
   test:     
