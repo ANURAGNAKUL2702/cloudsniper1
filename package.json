@@ -1,7 +1,7 @@
 {
   "name": "cloudsniper",
   "description": "AWS Security & Cost Optimization Scanner - Production Ready",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "license": "MIT",
   "author": "CloudSniper Team",
   "homepage": "https://astonishing-blancmange-9cb4f0.netlify.app",
@@ -11,6 +11,7 @@
   "private": true,
   "type": "module",
   "main": "dist/index.js",
+  "files": ["dist", "README.md"],
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
