@@ -9,5 +9,6 @@ export default {
     // Extend default theme with custom values
     extend: {},
   },
+  // Additional Tailwind CSS plugins
   plugins: [],
 };
