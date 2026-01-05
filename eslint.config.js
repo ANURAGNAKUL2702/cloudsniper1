@@ -22,6 +22,7 @@ export default tseslint.config(
       'react-refresh': reactRefresh,
     },
     rules: {
+      // React Hooks rules for proper dependency management
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': [
         'warn',
