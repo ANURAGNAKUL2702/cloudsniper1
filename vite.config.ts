@@ -21,4 +21,4 @@ export default defineConfig({
       },
     },
   },
-});
+}); // End Vite configuration

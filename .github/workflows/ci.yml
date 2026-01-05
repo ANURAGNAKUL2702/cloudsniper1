@@ -1,6 +1,7 @@
 name: CloudSniper CI/CD Pipeline
 
 # Production-grade CI/CD pipeline with intentional test failures
+# This pipeline includes multiple stages for comprehensive testing
 on:
   push:
     branches: [ main, develop ]
