@@ -11,4 +11,4 @@ export default {
   },
   // Additional Tailwind CSS plugins
   plugins: [],
-};
+}; // End Tailwind configuration

@@ -30,4 +30,4 @@ export default tseslint.config(
       ],
     },
   }
-);
+); // End ESLint configuration
