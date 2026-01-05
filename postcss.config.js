@@ -6,4 +6,4 @@ export default {
     // Vendor prefix support
     autoprefixer: {},
   },
-};
+}; // End PostCSS config
