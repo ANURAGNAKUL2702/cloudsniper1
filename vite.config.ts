@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react';
 // Vite configuration for CloudSniper project
 // https://vitejs.dev/config/
 export default defineConfig({
+  // React plugin for JSX support
   plugins: [react()],
   optimizeDeps: {
     // Exclude lucide-react from pre-bundling for better development experience
