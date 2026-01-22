@@ -2363,7 +2363,7 @@ button, input, select {
   position: absolute;
   top: 2rem;
   right: 2rem;
-  width: 200px;
+  width: 220px;
   background: rgba(0, 0, 0, 0.95);
   border: 1px solid #3b82f6;
   border-radius: 0.5rem;
@@ -2373,7 +2373,7 @@ button, input, select {
 
 @media (max-width: 768px) {
   .status-panel {
-    width: 150px;
+    width: 180px;
     top: 1rem;
     right: 1rem;
   }
@@ -2415,17 +2415,28 @@ button, input, select {
 .metric-row {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 0.5rem;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
+  min-height: 20px;
 }
 
 .metric-label {
   color: #9ca3af;
   text-transform: uppercase;
+  flex: 1;
+  font-size: 0.65rem;
+  line-height: 1.2;
 }
 
 .metric-value {
   font-weight: bold;
+  font-size: 0.7rem;
+  text-align: right;
+  flex-shrink: 0;
+  max-width: 50px;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .metric-value.counting {
