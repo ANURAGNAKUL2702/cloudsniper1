@@ -332,16 +332,16 @@ function AppContent() {
                   </div>
                   <div className="status-metrics">
                     <div className="metric-row">
-                      <span className="metric-label">REGIONS SCANNED</span>
+                      <span className="metric-label">REGIONS SCANNING</span>
                       <span className="metric-value counting">16</span>
                     </div>
                     <div className="metric-row">
-                      <span className="metric-label">SERVICES DETECTED</span>
+                      <span className="metric-label">SERVICES ANALYZING</span>
                       <span className="metric-value counting">25+</span>
                     </div>
                     <div className="metric-row">
-                      <span className="metric-label">SECURITY LEVEL</span>
-                      <span className="metric-value success">SECURE</span>
+                      <span className="metric-label">SCAN STATUS</span>
+                      <span className="metric-value success">ACTIVE</span>
                     </div>
                   </div>
                 </div>

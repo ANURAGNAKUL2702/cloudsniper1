@@ -2,6 +2,54 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 3D Start Scan Button */
+.scan-button-3d {
+  transform: perspective(800px) rotateX(8deg) rotateY(-3deg) translateZ(20px);
+  box-shadow: 
+    0 20px 40px rgba(147, 51, 234, 0.4),
+    0 10px 20px rgba(236, 72, 153, 0.3),
+    inset 0 2px 0 rgba(255, 255, 255, 0.15),
+    0 0 30px rgba(147, 51, 234, 0.2);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+  position: relative;
+}
+
+.scan-button-3d::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(255, 255, 255, 0.05) 100%);
+  transform: translateZ(1px);
+  pointer-events: none;
+}
+
+.scan-button-3d:hover {
+  transform: perspective(800px) rotateX(2deg) rotateY(-1deg) translateZ(40px) scale(1.08);
+  box-shadow: 
+    0 30px 60px rgba(147, 51, 234, 0.6),
+    0 15px 30px rgba(236, 72, 153, 0.5),
+    inset 0 2px 0 rgba(255, 255, 255, 0.25),
+    0 0 50px rgba(147, 51, 234, 0.4),
+    0 0 100px rgba(236, 72, 153, 0.2);
+}
+
+.scan-button-3d:active {
+  transform: perspective(800px) rotateX(12deg) rotateY(-5deg) translateZ(10px) scale(0.98);
+  box-shadow: 
+    0 10px 20px rgba(147, 51, 234, 0.5),
+    0 5px 10px rgba(236, 72, 153, 0.4),
+    inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.scan-button-3d:disabled {
+  transform: perspective(800px) rotateX(4deg) rotateY(-1deg) translateZ(5px);
+  box-shadow: 
+    0 8px 16px rgba(107, 114, 128, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
 /* Premium Dark Theme Variables */
 :root {
   --theme-bg: #0a0a0a;
