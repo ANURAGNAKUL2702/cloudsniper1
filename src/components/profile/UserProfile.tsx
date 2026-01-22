@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { User, Mail, Building, Calendar, Settings, Save, X, Camera, Bell, Shield, Palette } from 'lucide-react';
+import { User, Settings, Save, X, Camera, Bell, Shield, Palette } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface UserProfileProps {

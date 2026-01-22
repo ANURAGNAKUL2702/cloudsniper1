@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Server, HardDrive, Database, Loader as LoadBalancer, Users, CheckCircle, Clock, XCircle, Calendar, User, Sparkles, Brain, Shield, DollarSign, Zap, AlertTriangle, MessageCircle, TrendingUp, Eye, BarChart3, PieChart, LineChart } from 'lucide-react';
+import { Server, HardDrive, Database, Loader as LoadBalancer, Users, CheckCircle, Clock, XCircle, Calendar, User, Sparkles, Brain, Shield, DollarSign, Zap, AlertTriangle, MessageCircle, TrendingUp, Eye, BarChart3 } from 'lucide-react';
 import { ScanResult } from '../types/scanner';
 import ServiceCard from './ServiceCard';
 import ChartsSection from './ChartsSection';
-import { ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, LineChart as RechartsLineChart, Line, RadialBarChart, RadialBar, Legend } from 'recharts';
+import { ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, LineChart as RechartsLineChart, Line, RadialBarChart, RadialBar } from 'recharts';
 
 interface ScanResultsProps {
   scanResult: ScanResult;
@@ -235,7 +235,7 @@ const ScanResults: React.FC<ScanResultsProps> = ({ scanResult }) => {
               <Calendar className="h-5 w-5 text-blue-400 group-hover:text-blue-300 transition-colors" />
               <span className="font-semibold text-blue-200">Scan Time</span>
             </div>
-            <p className="text-sm text-white mt-1">{formatTimestamp(timestamp)}</p>
+            <p className="text-sm text-white mt-1">{formatTimestamp(timestamp || new Date().toISOString())}</p>
           </div>
           
           <div className="bg-slate-800/50 backdrop-blur-sm p-4 rounded-xl border border-cyan-500/20 hover:border-cyan-400/40 transition-all duration-300 group">

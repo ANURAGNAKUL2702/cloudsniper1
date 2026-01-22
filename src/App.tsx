@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import Header from './components/Header';
@@ -243,22 +243,22 @@ function AppContent() {
 
                   {/* AWS Services Orbit */}
                   <div className="services-orbit">
-                    <div className="orbit-service orbit-ec2" style={{ '--angle': '0deg' }}>
+                    <div className="orbit-service orbit-ec2" style={{ '--angle': '0deg' } as any}>
                       <span>🖥️</span>
                     </div>
-                    <div className="orbit-service orbit-s3" style={{ '--angle': '60deg' }}>
+                    <div className="orbit-service orbit-s3" style={{ '--angle': '60deg' } as any}>
                       <span>🗄️</span>
                     </div>
-                    <div className="orbit-service orbit-iam" style={{ '--angle': '120deg' }}>
+                    <div className="orbit-service orbit-iam" style={{ '--angle': '120deg' } as any}>
                       <span>👤</span>
                     </div>
-                    <div className="orbit-service orbit-lambda" style={{ '--angle': '180deg' }}>
+                    <div className="orbit-service orbit-lambda" style={{ '--angle': '180deg' } as any}>
                       <span>⚡</span>
                     </div>
-                    <div className="orbit-service orbit-vpc" style={{ '--angle': '240deg' }}>
+                    <div className="orbit-service orbit-vpc" style={{ '--angle': '240deg' } as any}>
                       <span>🌐</span>
                     </div>
-                    <div className="orbit-service orbit-watch" style={{ '--angle': '300deg' }}>
+                    <div className="orbit-service orbit-watch" style={{ '--angle': '300deg' } as any}>
                       <span>📊</span>
                     </div>
                   </div>

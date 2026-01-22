@@ -8,7 +8,7 @@ interface ScanFormProps {
 
 const ScanForm: React.FC<ScanFormProps> = ({ onScan, isLoading }) => {
   const [roleArn, setRoleArn] = useState('');
-  const [showYamlInfo, setShowYamlInfo] = useState(false);
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

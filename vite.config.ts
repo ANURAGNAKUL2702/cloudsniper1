@@ -6,9 +6,20 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   // React plugin for JSX support
   plugins: [react()],
+  base: '/cloudsniper1/',
   optimizeDeps: {
     // Exclude lucide-react from pre-bundling for better development experience
     exclude: ['lucide-react'],
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          recharts: ['recharts']
+        }
+      }
+    }
   },
   server: {
     // Proxy API requests to AWS Lambda

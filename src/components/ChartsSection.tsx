@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, AreaChart, Area, RadialBarChart, RadialBar, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area, Legend } from 'recharts';
 import { TrendingUp, PieChart as PieChartIcon, BarChart3, Activity, Zap, DollarSign } from 'lucide-react';
 import { ScanResult } from '../types/scanner';
 
@@ -89,7 +89,7 @@ const ChartsSection: React.FC<ChartsSectionProps> = ({ scanResult }) => {
     },
   ];
 
-  const COLORS = ['#8B5CF6', '#06B6D4', '#F59E0B', '#EF4444', '#10B981', '#EC4899', '#84CC16'];
+
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
