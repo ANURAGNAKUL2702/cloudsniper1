@@ -35,10 +35,10 @@ const ScanForm: React.FC<ScanFormProps> = ({ onScan, isLoading }) => {
   };
 
   return (
-    <div className="theme-card p-6 hover:border-purple-400/40 transition-all duration-300">
+    <div className="bg-gradient-to-br from-black/40 to-black/20 backdrop-blur-xl p-6 rounded-2xl border border-white/10 shadow-inner hover:border-purple-400/40 transition-all duration-300">
       <div className="mb-6">
-        <h2 className="text-xl sm:text-2xl font-bold theme-text mb-2">Start Your AWS Scan</h2>
-        <p className="theme-text-secondary text-sm sm:text-base">Enter your IAM role ARN to begin comprehensive security scanning</p>
+        <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Start Your AWS Scan</h2>
+        <p className="text-white/70 text-sm sm:text-base">Enter your IAM role ARN to begin comprehensive security scanning</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">

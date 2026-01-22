@@ -45,7 +45,7 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <header className="theme-header border-b theme-border relative z-40">
+      <header className="bg-black/90 backdrop-blur-xl border-b border-white/10 relative z-40 shadow-2xl">
         <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3 group">

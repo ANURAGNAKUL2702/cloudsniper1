@@ -155,105 +155,191 @@ function AppContent() {
   console.log('Current state:', { scanResult, isLoading, error });
 
   return (
-    <div className="min-h-screen theme-bg">
+    <div className="min-h-screen bg-black text-white">
+      {/* Pure Black Background Overlay */}
+      <div className="fixed inset-0 bg-black -z-10"></div>
+      
       <Header />
       
-      <main className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <main className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 bg-black/50 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto space-y-6">
           {/* Scan Form */}
           <div className="animate-fade-in">
             <ScanForm onScan={handleScan} isLoading={isLoading} />
           </div>
 
-          {/* Enhanced Loading Animation with Graphics */}
+          {/* CYBERPUNK MATRIX SCANNING INTERFACE */}
           {isLoading && (
             <div ref={scanningRef} className="animate-slide-up scroll-mt-16 sm:scroll-mt-20">
-              <div className="theme-card p-4 sm:p-6 lg:p-8 relative overflow-hidden">
-                {/* Animated Particles Background */}
-                <div className="scanning-particles">
-                  {[...Array(8)].map((_, i) => (
+              <div className="cyberpunk-scanner-container relative overflow-hidden">
+                
+                {/* Matrix Rain Background */}
+                <div className="matrix-rain-container">
+                  {[...Array(20)].map((_, i) => (
                     <div
                       key={i}
-                      className="scanning-particle"
+                      className="matrix-column"
                       style={{
-                        left: `${Math.random() * 100}%`,
-                        animationDelay: `${Math.random() * 3}s`,
+                        left: `${i * 5}%`,
+                        animationDelay: `${Math.random() * 2}s`,
                         animationDuration: `${3 + Math.random() * 2}s`
                       }}
-                    />
+                    >
+                      {[...Array(15)].map((_, j) => (
+                        <span
+                          key={j}
+                          className="matrix-char"
+                          style={{
+                            animationDelay: `${Math.random() * 1}s`
+                          }}
+                        >
+                          {Math.random() > 0.5 ? '1' : '0'}
+                        </span>
+                      ))}
+                    </div>
                   ))}
                 </div>
 
-                <div className="relative z-10">
-                  {/* Main Scanning Graphics */}
-                  <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6">
-                    {/* Radar Scanner */}
-                    <div className="relative">
-                      <div className="scanning-radar">
-                        <div className="scanning-waves">
-                          <div className="scanning-wave"></div>
-                          <div className="scanning-wave"></div>
-                          <div className="scanning-wave"></div>
-                        </div>
-                      </div>
-                    </div>
 
-                    {/* Scanning Text */}
-                    <div className="text-center">
-                      <h3 className="text-lg sm:text-xl lg:text-2xl font-bold theme-text mb-2 flex items-center justify-center space-x-2">
-                        <span>🔍 Scanning Your AWS Account</span>
-                      </h3>
-                      <p className="theme-text-secondary mb-4 text-sm sm:text-base">Analyzing resources and security configurations...</p>
+
+                {/* Main Scanner Interface */}
+                <div className="scanner-interface">
+                  
+                  {/* Holographic Title */}
+                  <div className="holo-title-container">
+                    <h2 className="holo-title">
+                      <span className="holo-word">QUANTUM</span>
+                      <span className="holo-word">AWS</span>
+                      <span className="holo-word">SCANNER</span>
+                    </h2>
+                    <div className="scanning-beam"></div>
+                    <div className="holo-subtitle">DEEP INFRASTRUCTURE ANALYSIS IN PROGRESS</div>
+                  </div>
+
+                  {/* 3D Radar Scanner */}
+                  <div className="radar-scanner">
+                    <div className="radar-screen">
+                      <div className="radar-rings">
+                        <div className="radar-ring"></div>
+                        <div className="radar-ring"></div>
+                        <div className="radar-ring"></div>
+                      </div>
+                      <div className="radar-sweep"></div>
+                      <div className="radar-crosshair-h"></div>
+                      <div className="radar-crosshair-v"></div>
                       
-                      {/* Animated Status Messages */}
-                      <div className="space-y-2 text-xs sm:text-sm theme-text-secondary">
-                        <div className="flex items-center justify-center space-x-2">
-                          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                          <span>Connecting to AWS services...</span>
-                        </div>
-                        <div className="flex items-center justify-center space-x-2">
-                          <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-                          <span>Scanning EC2 instances across regions...</span>
-                        </div>
-                        <div className="flex items-center justify-center space-x-2">
-                          <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
-                          <span>Analyzing S3 buckets and security policies...</span>
-                        </div>
-                      </div>
+                      {/* AWS Service Blips */}
+                      <div className="service-blip blip-ec2" style={{ top: '20%', left: '70%' }}>EC2</div>
+                      <div className="service-blip blip-s3" style={{ top: '60%', left: '30%' }}>S3</div>
+                      <div className="service-blip blip-iam" style={{ top: '80%', left: '80%' }}>IAM</div>
+                      <div className="service-blip blip-vpc" style={{ top: '30%', left: '20%' }}>VPC</div>
                     </div>
+                  </div>
 
-                    {/* Bouncing Dots */}
-                    <div className="scanning-dots">
-                      <div className="scanning-dot"></div>
-                      <div className="scanning-dot"></div>
-                      <div className="scanning-dot"></div>
+                  {/* Orbital Scanner Rings */}
+                  <div className="orbital-scanner">
+                    <div className="orbital-core"></div>
+                  </div>
+
+                  {/* AWS Services Orbit */}
+                  <div className="services-orbit">
+                    <div className="orbit-service orbit-ec2" style={{ '--angle': '0deg' }}>
+                      <span>🖥️</span>
                     </div>
-
-                    {/* Progress Bar */}
-                    <div className="w-full max-w-xs sm:max-w-md">
-                      <div className="scanning-progress">
-                        <div className="scanning-progress-bar"></div>
-                      </div>
-                      <div className="flex justify-between text-xs theme-text-secondary mt-2 px-2">
-                        <span>Initializing...</span>
-                        <span className="hidden sm:inline">Scanning in progress</span>
-                        <span className="sm:hidden">Progress</span>
-                        <span>Almost done</span>
-                      </div>
+                    <div className="orbit-service orbit-s3" style={{ '--angle': '60deg' }}>
+                      <span>🗄️</span>
                     </div>
+                    <div className="orbit-service orbit-iam" style={{ '--angle': '120deg' }}>
+                      <span>👤</span>
+                    </div>
+                    <div className="orbit-service orbit-lambda" style={{ '--angle': '180deg' }}>
+                      <span>⚡</span>
+                    </div>
+                    <div className="orbit-service orbit-vpc" style={{ '--angle': '240deg' }}>
+                      <span>🌐</span>
+                    </div>
+                    <div className="orbit-service orbit-watch" style={{ '--angle': '300deg' }}>
+                      <span>📊</span>
+                    </div>
+                  </div>
 
-                    {/* Additional Info */}
-                    <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 backdrop-blur-sm border border-blue-500/20 rounded-xl p-3 sm:p-4 max-w-xs sm:max-w-md">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
-                        <span className="text-blue-200 font-medium text-xs sm:text-sm">Real-time Analysis</span>
-                      </div>
-                      <p className="text-blue-300 text-xs sm:text-sm">
-                        Comprehensive security scan in progress. This may take 30-60 seconds.
-                      </p>
+                </div>
+
+                {/* Cyber Terminal */}
+                <div className="cyber-terminal">
+                  <div className="terminal-header">
+                    <div className="terminal-controls">
+                      <span className="control-btn close"></span>
+                      <span className="control-btn minimize"></span>
+                      <span className="control-btn maximize"></span>
+                    </div>
+                    <div className="terminal-title">CloudSniper@AWS:~$</div>
+                  </div>
+                  <div className="terminal-body">
+                    <div className="terminal-line">
+                      <span className="prompt">root@aws-scanner:~# </span>
+                      <span className="command typing-animation">python3 deep_scan.py --target=infrastructure</span>
+                    </div>
+                    <div className="terminal-line">
+                      <span className="output">Initializing quantum scanners...</span>
+                      <span className="spinner">⠋</span>
+                    </div>
+                    <div className="terminal-line">
+                      <span className="output success">✓ Connected to AWS API</span>
+                    </div>
+                    <div className="terminal-line">
+                      <span className="output">Scanning 16 regions...</span>
+                      <span className="cursor">_</span>
                     </div>
                   </div>
                 </div>
+
+                {/* Quantum Progress Bar */}
+                <div className="quantum-progress-section">
+                  <div className="progress-title">QUANTUM ANALYSIS IN PROGRESS</div>
+                  <div className="quantum-progress-bar">
+                    <div className="progress-track">
+                      <div className="progress-fill"></div>
+                      <div className="progress-glow-sweep"></div>
+                    </div>
+                    <div className="progress-particles">
+                      {[...Array(8)].map((_, i) => (
+                        <div
+                          key={i}
+                          className="progress-particle"
+                          style={{
+                            left: `${i * 12.5}%`,
+                            animationDelay: `${i * 0.2}s`
+                          }}
+                        ></div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="progress-percentage">67%</div>
+                </div>
+
+                {/* Live Status Panel */}
+                <div className="status-panel">
+                  <div className="panel-header">
+                    <span className="panel-title">SYSTEM STATUS</span>
+                    <span className="panel-indicator active"></span>
+                  </div>
+                  <div className="status-metrics">
+                    <div className="metric-row">
+                      <span className="metric-label">REGIONS SCANNED</span>
+                      <span className="metric-value counting">16</span>
+                    </div>
+                    <div className="metric-row">
+                      <span className="metric-label">SERVICES DETECTED</span>
+                      <span className="metric-value counting">25+</span>
+                    </div>
+                    <div className="metric-row">
+                      <span className="metric-label">SECURITY LEVEL</span>
+                      <span className="metric-value success">SECURE</span>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
           )}
