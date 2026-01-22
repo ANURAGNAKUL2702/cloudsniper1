@@ -173,6 +173,12 @@ function AppContent() {
             <div ref={scanningRef} className="animate-slide-up scroll-mt-16 sm:scroll-mt-20">
               <div className="cyberpunk-scanner-container relative overflow-hidden">
                 
+                {/* Matrix Data Streams */}
+                <div className="matrix-data-stream"></div>
+                <div className="matrix-data-stream"></div>
+                <div className="matrix-data-stream"></div>
+                <div className="matrix-data-stream"></div>
+                
                 {/* Matrix Rain Background */}
                 <div className="matrix-rain-container">
                   {[...Array(20)].map((_, i) => (
@@ -208,7 +214,7 @@ function AppContent() {
                   {/* Holographic Title */}
                   <div className="holo-title-container">
                     <h2 className="holo-title">
-                      <span className="holo-word">QUANTUM</span>
+                      <span className="holo-word">CLOUDSNIPER</span>
                       <span className="holo-word">AWS</span>
                       <span className="holo-word">SCANNER</span>
                     </h2>
@@ -281,7 +287,7 @@ function AppContent() {
                       <span className="command typing-animation">python3 deep_scan.py --target=infrastructure</span>
                     </div>
                     <div className="terminal-line">
-                      <span className="output">Initializing quantum scanners...</span>
+                      <span className="output">Initializing AWS security scanners...</span>
                       <span className="spinner">⠋</span>
                     </div>
                     <div className="terminal-line">
@@ -294,10 +300,10 @@ function AppContent() {
                   </div>
                 </div>
 
-                {/* Quantum Progress Bar */}
-                <div className="quantum-progress-section">
-                  <div className="progress-title">QUANTUM ANALYSIS IN PROGRESS</div>
-                  <div className="quantum-progress-bar">
+                {/* AWS Analysis Progress */}
+                <div className="aws-analysis-section">
+                  <div className="progress-title">AWS SECURITY ANALYSIS IN PROGRESS</div>
+                  <div className="aws-progress-bar">
                     <div className="progress-track">
                       <div className="progress-fill"></div>
                       <div className="progress-glow-sweep"></div>

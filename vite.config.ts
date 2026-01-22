@@ -6,7 +6,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   // React plugin for JSX support
   plugins: [react()],
-  base: '/cloudsniper1/',
+  base: './',
   optimizeDeps: {
     // Exclude lucide-react from pre-bundling for better development experience
     exclude: ['lucide-react'],
