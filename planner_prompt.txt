@@ -1,0 +1,25 @@
+Based on the user's request, create a detailed execution plan.
+
+Format your response as valid JSON with this structure:
+{
+    "task_analysis": "Brief analysis of what the user wants to accomplish",
+    "plan": [
+        {
+            "step_number": 1,
+            "action": "Action name",
+            "description": "Detailed description of this step",
+            "estimated_time": "Time estimate (e.g., '5 minutes', '2 hours')"
+        }
+    ],
+    "requirements": ["Any prerequisites", "Dependencies", "Tools needed"],
+    "success_criteria": ["How to know the task is complete", "Expected outcomes"]
+}
+
+Important:
+- Ensure the JSON is valid and well-formatted
+- Make plans specific and actionable
+- Consider the user's context and skill level
+- Break complex tasks into manageable steps
+- Include realistic time estimates
+- List all necessary requirements upfront
+- Define clear success criteria

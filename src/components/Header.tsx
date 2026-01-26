@@ -49,8 +49,27 @@ const Header: React.FC = () => {
         <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3 group">
-              <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-2 sm:p-3 rounded-xl backdrop-blur-sm shadow-lg group-hover:shadow-purple-500/50 transition-all duration-300 group-hover:scale-110">
-                <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
+              <div className="relative overflow-visible">
+                {/* Animated particles */}
+                <div className="absolute inset-0 animate-pulse opacity-20">
+                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
+                  <div className="absolute -bottom-1 -left-1 w-1.5 h-1.5 bg-pink-400 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
+                  <div className="absolute top-0 left-0 w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '1s' }}></div>
+                  <div className="absolute -top-2 left-2 w-1 h-1 bg-cyan-400 rounded-full animate-ping" style={{ animationDelay: '1.5s' }}></div>
+                </div>
+                
+                {/* Main shield container */}
+                <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-2 sm:p-3 rounded-xl backdrop-blur-sm shadow-lg group-hover:shadow-purple-500/50 transition-all duration-300 group-hover:scale-110 relative shield-container">
+                  {/* Glow effect on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 rounded-xl blur-md opacity-0 group-hover:opacity-30 transition-opacity duration-300 -z-10"></div>
+                  
+                  <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-white relative z-10" />
+                  
+                  {/* Scanning lines effect */}
+                  <div className="absolute inset-0 overflow-hidden rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-white to-transparent animate-scan-line"></div>
+                  </div>
+                </div>
               </div>
               <div>
                 <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 bg-clip-text text-transparent">

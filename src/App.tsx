@@ -4,6 +4,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import Header from './components/Header';
 import ScanForm from './components/ScanForm';
 import ScanResults from './components/ScanResults';
+import FloatingAIChat from './components/ai/FloatingAIChat';
 import { ScanResult } from './types/scanner';
 
 function AppContent() {
@@ -500,6 +501,9 @@ function AppContent() {
           )}
         </div>
       </main>
+
+      {/* Floating AI Chat - Always Available */}
+      <FloatingAIChat scanResult={scanResult} />
 
       {/* Footer */}
       <footer className="theme-footer py-6 mt-12 border-t theme-border">

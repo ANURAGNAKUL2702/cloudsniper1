@@ -14,6 +14,17 @@ const ScanForm: React.FC<ScanFormProps> = ({ onScan, isLoading }) => {
     e.preventDefault();
     if (roleArn.trim()) {
       onScan(roleArn.trim());
+      
+      // Smooth scroll to results after a short delay
+      setTimeout(() => {
+        const resultsElement = document.getElementById('scan-results');
+        if (resultsElement) {
+          resultsElement.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start' 
+          });
+        }
+      }, 1500); // Wait for scan to start
     }
   };
 

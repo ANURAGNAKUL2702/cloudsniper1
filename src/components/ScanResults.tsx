@@ -3,7 +3,9 @@ import { Server, HardDrive, Database, Loader as LoadBalancer, Users, CheckCircle
 import { ScanResult } from '../types/scanner';
 import ServiceCard from './ServiceCard';
 import ChartsSection from './ChartsSection';
-import { ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, LineChart as RechartsLineChart, Line, RadialBarChart, RadialBar } from 'recharts';
+import AIInsights from './ai/AIInsights';
+import AIChat from './ai/AIChat';
+import { ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 
 interface ScanResultsProps {
   scanResult: ScanResult;
@@ -11,8 +13,36 @@ interface ScanResultsProps {
 
 const ScanResults: React.FC<ScanResultsProps> = ({ scanResult }) => {
   const [activeInsight, setActiveInsight] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'charts' | 'insights'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'charts' | 'insights' | 'ai'>('overview');
+  const [isChatOpen, setIsChatOpen] = useState(false);
   console.log('ScanResults received:', scanResult);
+
+  const handleOpenChat = () => {
+    setIsChatOpen(true);
+  };
+
+  const handleCloseChat = () => {
+    setIsChatOpen(false);
+  };
+
+  const handleInsightClick = (insightId: string) => {
+    const newActiveInsight = activeInsight === insightId ? null : insightId;
+    setActiveInsight(newActiveInsight);
+    
+    // Smooth scroll to analysis content when opening an insight
+    if (newActiveInsight) {
+      setTimeout(() => {
+        const analysisElement = document.getElementById('ai-analysis-content');
+        if (analysisElement) {
+          analysisElement.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start',
+            inline: 'nearest'
+          });
+        }
+      }, 100); // Small delay to allow animation to start
+    }
+  };
 
   // Handle test mode or different response structures
   if (scanResult.status === 'test-mode') {
@@ -86,7 +116,6 @@ const ScanResults: React.FC<ScanResultsProps> = ({ scanResult }) => {
     const avgEBSCost = 12.5; // $0.10/GB/month avg for gp3, assuming 125GB per instance
     const avgInstanceCost = 65; // Average t3.medium cost per month
     const avgVolumeCost = 8; // $0.08/GB/month for unattached volumes
-    const avgS3Cost = 2.3; // $0.023/GB/month standard storage
     
     let analysis = `**CloudSniper AI Cost Intelligence Report**\n\nComprehensive cost analysis across ${totalInstances} EC2 instances, ${s3Buckets} S3 buckets, and ${unattachedVolumes} EBS volumes:\n\n`;
     
@@ -107,7 +136,6 @@ const ScanResults: React.FC<ScanResultsProps> = ({ scanResult }) => {
     if (idleInstances > 0) {
       const idleCost = idleInstances * avgInstanceCost;
       totalMonthlySavings += idleCost * 0.7; // 70% savings potential
-      const optimizedCost = idleCost * 0.3; // Downsize to 30% of current cost
       analysis += `⚠️ **${idleInstances} Underutilized Instances** (CPU < 10%)\n`;
       analysis += `• Current monthly cost: $${idleCost.toFixed(2)}\n`;
       analysis += `• Potential savings: $${(idleCost * 0.7).toFixed(2)}/month\n`;
@@ -272,18 +300,18 @@ const ScanResults: React.FC<ScanResultsProps> = ({ scanResult }) => {
     
     let analysis = `**CloudSniper Performance Intelligence Report**\n\nAdvanced performance analysis across ${totalInstances} EC2 instances with optimization recommendations:\n\n`;
     
-    const utilizationRate = totalInstances > 0 ? ((activeInstances / totalInstances) * 100).toFixed(1) : 0;
+    const utilizationRate = totalInstances > 0 ? ((activeInstances / totalInstances) * 100) : 0;
     let performanceScore = 70; // Base performance score
     
     // Resource Utilization Assessment
     analysis += `📊 **Infrastructure Utilization Metrics**\n`;
-    analysis += `• **Active instances**: ${activeInstances} (${utilizationRate}% utilization)\n`;
+    analysis += `• **Active instances**: ${activeInstances} (${utilizationRate.toFixed(1)}% utilization)\n`;
     analysis += `• **Underutilized**: ${idleInstances} instances\n`;
     analysis += `• **Stopped/unused**: ${stoppedInstances} instances\n\n`;
     
     if (utilizationRate >= 80) {
       performanceScore += 20;
-      analysis += `🎯 **Excellent Utilization** (${utilizationRate}%)\n`;
+      analysis += `🎯 **Excellent Utilization** (${utilizationRate.toFixed(1)}%)\n`;
       analysis += `• **Status**: Optimal resource efficiency\n`;
       analysis += `• **Next steps**: Consider auto-scaling for peak demand\n`;
       analysis += `• **Advanced optimizations**:\n`;
@@ -292,15 +320,15 @@ const ScanResults: React.FC<ScanResultsProps> = ({ scanResult }) => {
       analysis += `  - Enhanced networking for HPC workloads\n\n`;
     } else if (utilizationRate >= 60) {
       performanceScore += 10;
-      analysis += `✅ **Good Utilization** (${utilizationRate}%)\n`;
+      analysis += `✅ **Good Utilization** (${utilizationRate.toFixed(1)}%)\n`;
       analysis += `• Room for optimization exists\n\n`;
     } else if (utilizationRate >= 40) {
       performanceScore -= 10;
-      analysis += `⚠️ **Moderate Utilization** (${utilizationRate}%)\n`;
+      analysis += `⚠️ **Moderate Utilization** (${utilizationRate.toFixed(1)}%)\n`;
       analysis += `• Significant optimization opportunities\n\n`;
     } else {
       performanceScore -= 25;
-      analysis += `🚨 **Poor Utilization** (${utilizationRate}%)\n`;
+      analysis += `🚨 **Poor Utilization** (${utilizationRate.toFixed(1)}%)\n`;
       analysis += `• Critical performance and cost issues\n\n`;
     }
     
@@ -546,7 +574,7 @@ const ScanResults: React.FC<ScanResultsProps> = ({ scanResult }) => {
   ];
 
   return (
-    <div className="space-y-8">
+    <div id="scan-results" className="space-y-8">
       {/* Scan Summary Header - Updated to Blue/Indigo Theme */}
       <div className="bg-gradient-to-r from-blue-900/90 to-indigo-900/90 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/30 shadow-2xl animate-glow">
         <div className="flex items-center justify-between mb-4">
@@ -720,24 +748,30 @@ const ScanResults: React.FC<ScanResultsProps> = ({ scanResult }) => {
       )}
 
       {activeTab === 'insights' && (
-        <div className="animate-fade-in">
-          {/* Premium AI AWS Analysis Section */}
-          <div className="relative overflow-hidden bg-gradient-to-br from-black/95 via-gray-900/90 to-black/95 backdrop-blur-xl border border-blue-500/40 rounded-3xl p-8 shadow-2xl">
+        <div className="animate-fade-in space-y-6">
+          {/* New AI Agent Insights - Top Section */}
+          <AIInsights 
+            scanResult={scanResult} 
+            onOpenChat={handleOpenChat} 
+          />
+          
+          {/* Traditional AI Analysis Section */}
+          <div className="relative overflow-hidden bg-gradient-to-br from-black/95 via-gray-900/90 to-black/95 backdrop-blur-xl border border-blue-500/40 rounded-3xl p-6 shadow-2xl">
             {/* Premium Background Effects */}
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-cyan-500/10 to-blue-500/5 animate-premium-float"></div>
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-cyan-500 to-blue-500 animate-premium-glow"></div>
-            <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl"></div>
-            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl"></div>
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-blue-500/5 rounded-full blur-2xl"></div>
+            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-cyan-500/5 rounded-full blur-2xl"></div>
             
             <div className="relative z-10">
               {/* Premium Header */}
-              <div className="flex items-center justify-center space-x-4 mb-8">
+              <div className="flex items-center justify-center space-x-4 mb-8 mt-8">
                 <div className="bg-gradient-to-br from-blue-500/30 to-cyan-500/30 p-4 rounded-full backdrop-blur-sm border border-blue-400/40 shadow-lg">
                   <Brain className="h-10 w-10 text-blue-200 animate-premium-pulse" />
                 </div>
                 <div className="text-center">
                   <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-100 via-cyan-100 to-blue-100 bg-clip-text text-transparent flex items-center justify-center space-x-3">
-                    <span>🤖 AI AWS Expert Analysis</span>
+                    <span>AI AWS Expert Analysis</span>
                     <div className="flex space-x-1">
                       <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '0s'}}></div>
                       <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
@@ -749,11 +783,11 @@ const ScanResults: React.FC<ScanResultsProps> = ({ scanResult }) => {
               </div>
 
               {/* Premium AI Insight Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 relative z-10">
                 {aiInsights.map((insight) => (
                   <button
                     key={insight.id}
-                    onClick={() => setActiveInsight(activeInsight === insight.id ? null : insight.id)}
+                    onClick={() => handleInsightClick(insight.id)}
                     className={`relative group bg-gradient-to-br from-black/90 to-gray-900/85 backdrop-blur-xl p-6 rounded-2xl border border-blue-500/30 hover:border-blue-400/50 transition-all duration-500 text-left w-full transform hover:scale-[1.02] hover:shadow-2xl overflow-hidden`}
                   >
                     {/* Card Background Animation */}
@@ -797,7 +831,7 @@ const ScanResults: React.FC<ScanResultsProps> = ({ scanResult }) => {
 
               {/* Premium Active AI Analysis Display */}
               {activeInsight && (
-                <div className="animate-premium-slide">
+                <div id="ai-analysis-content" className="animate-premium-slide">
                   {aiInsights.map((insight) => (
                     activeInsight === insight.id && (
                       <div key={insight.id} className={`relative bg-gradient-to-br from-black/90 to-gray-900/85 backdrop-blur-xl p-8 rounded-3xl border border-blue-500/40 shadow-2xl overflow-hidden`}>
@@ -826,271 +860,9 @@ const ScanResults: React.FC<ScanResultsProps> = ({ scanResult }) => {
                             </div>
                           </div>
                           
-                          {/* Premium Analysis Output */}
-                          <div className="bg-gradient-to-br from-black/40 to-black/30 backdrop-blur-xl p-6 rounded-2xl border border-blue-500/20 shadow-inner">
-                            {/* AI Insight Charts */}
-                            <div className="mb-6">
-                              {insight.id === 'cost' && (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                  {/* Cost Breakdown Pie Chart */}
-                                  <div className="h-48 relative">
-                                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/10 via-orange-500/10 to-yellow-500/10 rounded-xl blur-xl"></div>
-                                    <ResponsiveContainer width="100%" height="100%">
-                                      <RechartsPieChart>
-                                        <Pie
-                                          data={[
-                                            { name: 'Stopped Instances', value: summary.stoppedInstancesCount * 8, color: '#EF4444' },
-                                            { name: 'Idle Instances', value: summary.idleRunningInstancesCount * 50, color: '#F59E0B' },
-                                            { name: 'Unused Volumes', value: summary.unattachedEBSVolumes * 10, color: '#DC2626' }
-                                          ].filter(item => item.value > 0)}
-                                          cx="50%"
-                                          cy="50%"
-                                          innerRadius={30}
-                                          outerRadius={70}
-                                          paddingAngle={5}
-                                          dataKey="value"
-                                        >
-                                          {[
-                                            { name: 'Stopped Instances', value: summary.stoppedInstancesCount * 8, color: '#EF4444' },
-                                            { name: 'Idle Instances', value: summary.idleRunningInstancesCount * 50, color: '#F59E0B' },
-                                            { name: 'Unused Volumes', value: summary.unattachedEBSVolumes * 10, color: '#DC2626' }
-                                          ].filter(item => item.value > 0).map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={entry.color} />
-                                          ))}
-                                        </Pie>
-                                        <Tooltip 
-                                          content={({ active, payload }) => {
-                                            if (active && payload && payload.length) {
-                                              return (
-                                                <div className="bg-black/80 backdrop-blur-sm p-2 rounded-lg border border-yellow-500/30">
-                                                  <p className="text-white text-xs">{payload[0].name}</p>
-                                                  <p className="text-yellow-400 text-xs font-bold">${payload[0].value}/month</p>
-                                                </div>
-                                              );
-                                            }
-                                            return null;
-                                          }}
-                                        />
-                                      </RechartsPieChart>
-                                    </ResponsiveContainer>
-                                    <div className="absolute bottom-2 left-2 text-yellow-300 text-xs font-semibold">💰 Cost Waste</div>
-                                  </div>
-                                  
-                                  {/* Savings Potential Bar */}
-                                  <div className="h-48 relative">
-                                    <div className="absolute inset-0 bg-gradient-to-b from-green-500/10 to-emerald-500/10 rounded-xl blur-xl"></div>
-                                    <ResponsiveContainer width="100%" height="100%">
-                                      <BarChart data={[
-                                        { category: 'Current', waste: (summary.stoppedInstancesCount * 8) + (summary.idleRunningInstancesCount * 50) + (summary.unattachedEBSVolumes * 10) },
-                                        { category: 'Optimized', waste: Math.max(0, ((summary.stoppedInstancesCount * 8) + (summary.idleRunningInstancesCount * 50) + (summary.unattachedEBSVolumes * 10)) * 0.2) }
-                                      ]}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(34, 197, 94, 0.2)" />
-                                        <XAxis dataKey="category" tick={{ fontSize: 10, fill: '#ffffff' }} />
-                                        <YAxis tick={{ fontSize: 10, fill: '#ffffff' }} />
-                                        <Tooltip 
-                                          content={({ active, payload }) => {
-                                            if (active && payload && payload.length) {
-                                              return (
-                                                <div className="bg-black/80 backdrop-blur-sm p-2 rounded-lg border border-green-500/30">
-                                                  <p className="text-white text-xs">{payload[0].payload.category}</p>
-                                                  <p className="text-green-400 text-xs font-bold">${payload[0].value}/month</p>
-                                                </div>
-                                              );
-                                            }
-                                            return null;
-                                          }}
-                                        />
-                                        <Bar dataKey="waste" fill="url(#costBarGradient)" radius={[4, 4, 0, 0]} />
-                                        <defs>
-                                          <linearGradient id="costBarGradient" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="0%" stopColor="#10B981" stopOpacity={0.8} />
-                                            <stop offset="100%" stopColor="#059669" stopOpacity={0.4} />
-                                          </linearGradient>
-                                        </defs>
-                                      </BarChart>
-                                    </ResponsiveContainer>
-                                    <div className="absolute bottom-2 left-2 text-green-300 text-xs font-semibold">📊 Optimization</div>
-                                  </div>
-                                </div>
-                              )}
-
-                              {insight.id === 'security' && (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                  {/* Security Score Radial */}
-                                  <div className="h-48 relative">
-                                    <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 via-pink-500/10 to-red-500/10 rounded-xl blur-xl"></div>
-                                    <ResponsiveContainer width="100%" height="100%">
-                                      <RadialBarChart cx="50%" cy="50%" innerRadius="30%" outerRadius="80%" data={[
-                                        { 
-                                          name: 'Security Score', 
-                                          score: Math.max(20, 100 - ((summary.iamUsersCount > 10 ? 30 : 0) + (summary.s3BucketsCount > 20 ? 25 : 0) + 15)),
-                                          fill: '#EF4444'
-                                        }
-                                      ]}>
-                                        <RadialBar dataKey="score" cornerRadius={10} fill="#EF4444" />
-                                        <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="fill-white text-lg font-bold">
-                                          {Math.max(20, 100 - ((summary.iamUsersCount > 10 ? 30 : 0) + (summary.s3BucketsCount > 20 ? 25 : 0) + 15))}%
-                                        </text>
-                                      </RadialBarChart>
-                                    </ResponsiveContainer>
-                                    <div className="absolute bottom-2 left-2 text-red-300 text-xs font-semibold">🛡️ Security Score</div>
-                                  </div>
-                                  
-                                  {/* Risk Distribution */}
-                                  <div className="h-48 relative">
-                                    <div className="absolute inset-0 bg-gradient-to-b from-orange-500/10 to-red-500/10 rounded-xl blur-xl"></div>
-                                    <ResponsiveContainer width="100%" height="100%">
-                                      <RechartsLineChart data={[
-                                        { name: 'IAM Users', risk: summary.iamUsersCount > 10 ? 8 : 3 },
-                                        { name: 'S3 Buckets', risk: summary.s3BucketsCount > 20 ? 7 : 2 },
-                                        { name: 'Load Balancers', risk: summary.elbCount > 5 ? 6 : 1 }
-                                      ]}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(239, 68, 68, 0.2)" />
-                                        <XAxis dataKey="name" tick={{ fontSize: 9, fill: '#ffffff' }} />
-                                        <YAxis tick={{ fontSize: 10, fill: '#ffffff' }} domain={[0, 10]} />
-                                        <Tooltip 
-                                          content={({ active, payload }) => {
-                                            if (active && payload && payload.length) {
-                                              return (
-                                                <div className="bg-black/80 backdrop-blur-sm p-2 rounded-lg border border-red-500/30">
-                                                  <p className="text-white text-xs">{payload[0].payload.name}</p>
-                                                  <p className="text-red-400 text-xs font-bold">Risk Level: {payload[0].value}/10</p>
-                                                </div>
-                                              );
-                                            }
-                                            return null;
-                                          }}
-                                        />
-                                        <Line type="monotone" dataKey="risk" stroke="#EF4444" strokeWidth={3} dot={{ fill: '#EF4444', strokeWidth: 2, r: 4 }} />
-                                      </RechartsLineChart>
-                                    </ResponsiveContainer>
-                                    <div className="absolute bottom-2 left-2 text-red-300 text-xs font-semibold">⚠️ Risk Levels</div>
-                                  </div>
-                                </div>
-                              )}
-
-                              {insight.id === 'performance' && (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                  {/* Utilization Gauge */}
-                                  <div className="h-48 relative">
-                                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-cyan-500/10 to-blue-500/10 rounded-xl blur-xl"></div>
-                                    <ResponsiveContainer width="100%" height="100%">
-                                      <RadialBarChart cx="50%" cy="50%" innerRadius="40%" outerRadius="80%" data={[
-                                        { 
-                                          name: 'Utilization', 
-                                          value: summary.totalInstancesScanned > 0 ? (summary.activeInstancesCount / summary.totalInstancesScanned * 100) : 0,
-                                          fill: '#3B82F6'
-                                        }
-                                      ]}>
-                                        <RadialBar dataKey="value" cornerRadius={10} fill="#3B82F6" />
-                                        <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="fill-white text-lg font-bold">
-                                          {summary.totalInstancesScanned > 0 ? Math.round(summary.activeInstancesCount / summary.totalInstancesScanned * 100) : 0}%
-                                        </text>
-                                      </RadialBarChart>
-                                    </ResponsiveContainer>
-                                    <div className="absolute bottom-2 left-2 text-blue-300 text-xs font-semibold">⚡ Utilization</div>
-                                  </div>
-                                  
-                                  {/* Performance Trends */}
-                                  <div className="h-48 relative">
-                                    <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/10 to-blue-500/10 rounded-xl blur-xl"></div>
-                                    <ResponsiveContainer width="100%" height="100%">
-                                      <BarChart data={[
-                                        { status: 'Active', count: summary.activeInstancesCount, color: '#10B981' },
-                                        { status: 'Idle', count: summary.idleRunningInstancesCount, color: '#F59E0B' },
-                                        { status: 'Stopped', count: summary.stoppedInstancesCount, color: '#EF4444' }
-                                      ]}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(59, 130, 246, 0.2)" />
-                                        <XAxis dataKey="status" tick={{ fontSize: 10, fill: '#ffffff' }} />
-                                        <YAxis tick={{ fontSize: 10, fill: '#ffffff' }} />
-                                        <Tooltip 
-                                          content={({ active, payload }) => {
-                                            if (active && payload && payload.length) {
-                                              return (
-                                                <div className="bg-black/80 backdrop-blur-sm p-2 rounded-lg border border-blue-500/30">
-                                                  <p className="text-white text-xs">{payload[0].payload.status} Instances</p>
-                                                  <p className="text-blue-400 text-xs font-bold">{payload[0].value} instances</p>
-                                                </div>
-                                              );
-                                            }
-                                            return null;
-                                          }}
-                                        />
-                                        <Bar dataKey="count" fill="#3B82F6" radius={[4, 4, 0, 0]} />
-                                      </BarChart>
-                                    </ResponsiveContainer>
-                                    <div className="absolute bottom-2 left-2 text-cyan-300 text-xs font-semibold">📈 Performance</div>
-                                  </div>
-                                </div>
-                              )}
-
-                              {insight.id === 'compliance' && (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                  {/* Compliance Score */}
-                                  <div className="h-48 relative">
-                                    <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-indigo-500/10 to-purple-500/10 rounded-xl blur-xl"></div>
-                                    <ResponsiveContainer width="100%" height="100%">
-                                      <RechartsPieChart>
-                                        <Pie
-                                          data={[
-                                            { name: 'Compliant', value: 70, color: '#10B981' },
-                                            { name: 'Non-Compliant', value: 30, color: '#EF4444' }
-                                          ]}
-                                          cx="50%"
-                                          cy="50%"
-                                          innerRadius={35}
-                                          outerRadius={70}
-                                          dataKey="value"
-                                          startAngle={90}
-                                          endAngle={-270}
-                                        >
-                                          <Cell fill="#10B981" />
-                                          <Cell fill="#EF4444" />
-                                        </Pie>
-                                        <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="fill-white text-lg font-bold">
-                                          70%
-                                        </text>
-                                      </RechartsPieChart>
-                                    </ResponsiveContainer>
-                                    <div className="absolute bottom-2 left-2 text-purple-300 text-xs font-semibold">📋 Compliance</div>
-                                  </div>
-                                  
-                                  {/* Resource Coverage */}
-                                  <div className="h-48 relative">
-                                    <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/10 to-purple-500/10 rounded-xl blur-xl"></div>
-                                    <ResponsiveContainer width="100%" height="100%">
-                                      <BarChart data={[
-                                        { service: 'EC2', coverage: 85 },
-                                        { service: 'S3', coverage: 60 },
-                                        { service: 'IAM', coverage: 75 },
-                                        { service: 'ELB', coverage: 90 }
-                                      ]}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(99, 102, 241, 0.2)" />
-                                        <XAxis dataKey="service" tick={{ fontSize: 10, fill: '#ffffff' }} />
-                                        <YAxis domain={[0, 100]} tick={{ fontSize: 10, fill: '#ffffff' }} />
-                                        <Tooltip 
-                                          content={({ active, payload }) => {
-                                            if (active && payload && payload.length) {
-                                              return (
-                                                <div className="bg-black/80 backdrop-blur-sm p-2 rounded-lg border border-purple-500/30">
-                                                  <p className="text-white text-xs">{payload[0].payload.service} Service</p>
-                                                  <p className="text-purple-400 text-xs font-bold">{payload[0].value}% Coverage</p>
-                                                </div>
-                                              );
-                                            }
-                                            return null;
-                                          }}
-                                        />
-                                        <Bar dataKey="coverage" fill="#8B5CF6" radius={[4, 4, 0, 0]} />
-                                      </BarChart>
-                                    </ResponsiveContainer>
-                                    <div className="absolute bottom-2 left-2 text-indigo-300 text-xs font-semibold">📊 Coverage</div>
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-
-                            {/* Modern Text Display */}
+                          {/* Analysis Content with Charts */}
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            {/* Left Side: Analysis Text */}
                             <div className="prose prose-invert max-w-none">
                               <div className="whitespace-pre-wrap text-blue-200 leading-relaxed font-medium text-sm">
                                 {insight.analysis.split('\n\n').map((paragraph, index) => (
@@ -1110,21 +882,271 @@ const ScanResults: React.FC<ScanResultsProps> = ({ scanResult }) => {
                                 ))}
                               </div>
                             </div>
-                            
-                            {/* Analysis Footer */}
-                            <div className="mt-6 pt-4 border-t border-blue-500/20">
-                              <div className="flex items-center justify-between text-xs text-blue-300">
-                                <div className="flex items-center space-x-2">
-                                  <Brain className="h-4 w-4" />
-                                  <span>Generated by CloudSniper AI</span>
-                                </div>
-                                <div className="flex items-center space-x-1">
-                                  <span>Confidence:</span>
-                                  <div className="w-12 h-2 bg-blue-500/20 rounded-full overflow-hidden">
-                                    <div className="w-10 h-full bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full"></div>
+
+                            {/* Right Side: Category-Specific Charts */}
+                            <div className="space-y-6">
+                              {/* Cost Optimization Charts */}
+                              {insight.id === 'cost' && (
+                                <div className="space-y-4">
+                                  {/* Cost Breakdown Pie Chart */}
+                                  <div className="bg-gray-800/50 rounded-lg p-4 border border-yellow-500/30">
+                                    <h5 className="font-semibold text-yellow-200 mb-3 flex items-center space-x-2">
+                                      <DollarSign className="w-4 h-4" />
+                                      <span>Cost Distribution</span>
+                                    </h5>
+                                    <ResponsiveContainer width="100%" height={200}>
+                                      <RechartsPieChart>
+                                        <Pie
+                                          data={[
+                                            { name: 'Running Instances', value: summary.activeInstancesCount * 50, fill: '#22c55e' },
+                                            { name: 'Stopped Instances', value: summary.stoppedInstancesCount * 20, fill: '#f59e0b' },
+                                            { name: 'Idle Instances', value: summary.idleRunningInstancesCount * 45, fill: '#ef4444' },
+                                            { name: 'Storage (EBS)', value: summary.unattachedEBSVolumes * 15, fill: '#8b5cf6' }
+                                          ]}
+                                          cx="50%"
+                                          cy="50%"
+                                          outerRadius={70}
+                                          dataKey="value"
+                                          label={({ name, value }) => `${name}: $${value}`}
+                                        >
+                                          {[{ fill: '#22c55e' }, { fill: '#f59e0b' }, { fill: '#ef4444' }, { fill: '#8b5cf6' }].map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                                          ))}
+                                        </Pie>
+                                        <Tooltip />
+                                      </RechartsPieChart>
+                                    </ResponsiveContainer>
                                   </div>
-                                  <span>95%</span>
+
+                                  {/* Savings Potential Bar Chart */}
+                                  <div className="bg-gray-800/50 rounded-lg p-4 border border-yellow-500/30">
+                                    <h5 className="font-semibold text-yellow-200 mb-3">Monthly Savings Potential</h5>
+                                    <ResponsiveContainer width="100%" height={160}>
+                                      <BarChart data={[
+                                        { category: 'Terminate Stopped', savings: summary.stoppedInstancesCount * 20, fill: '#f59e0b' },
+                                        { category: 'Right-size Idle', savings: summary.idleRunningInstancesCount * 35, fill: '#ef4444' },
+                                        { category: 'Remove Volumes', savings: summary.unattachedEBSVolumes * 8, fill: '#8b5cf6' },
+                                        { category: 'Reserved Instances', savings: summary.activeInstancesCount * 15, fill: '#22c55e' }
+                                      ]}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                                        <XAxis dataKey="category" tick={{ fill: '#fde047', fontSize: 10 }} angle={-45} textAnchor="end" height={60} />
+                                        <YAxis tick={{ fill: '#fde047', fontSize: 12 }} />
+                                        <Tooltip 
+                                          contentStyle={{ 
+                                            backgroundColor: '#1f2937', 
+                                            border: '1px solid #f59e0b',
+                                            borderRadius: '8px',
+                                            color: '#fde047'
+                                          }}
+                                          formatter={(value) => [`$${value}`, 'Monthly Savings']}
+                                        />
+                                        <Bar dataKey="savings" fill="#f59e0b" />
+                                      </BarChart>
+                                    </ResponsiveContainer>
+                                  </div>
                                 </div>
+                              )}
+
+                              {/* Security Assessment Charts */}
+                              {insight.id === 'security' && (
+                                <div className="space-y-4">
+                                  {/* Security Risk Levels */}
+                                  <div className="bg-gray-800/50 rounded-lg p-4 border border-red-500/30">
+                                    <h5 className="font-semibold text-red-200 mb-3 flex items-center space-x-2">
+                                      <Shield className="w-4 h-4" />
+                                      <span>Security Risk Assessment</span>
+                                    </h5>
+                                    <ResponsiveContainer width="100%" height={200}>
+                                      <RechartsPieChart>
+                                        <Pie
+                                          data={[
+                                            { name: 'Critical', value: summary.iamUsersCount > 15 ? 30 : 10, fill: '#dc2626' },
+                                            { name: 'High', value: summary.s3BucketsCount > 20 ? 25 : 15, fill: '#ea580c' },
+                                            { name: 'Medium', value: summary.elbCount > 0 ? 20 : 30, fill: '#ca8a04' },
+                                            { name: 'Low', value: 25 + (15 - Math.min(summary.iamUsersCount, 15)), fill: '#16a34a' }
+                                          ]}
+                                          cx="50%"
+                                          cy="50%"
+                                          outerRadius={70}
+                                          dataKey="value"
+                                          label={({ name, value }) => `${name}: ${value}%`}
+                                        >
+                                          {[{ fill: '#dc2626' }, { fill: '#ea580c' }, { fill: '#ca8a04' }, { fill: '#16a34a' }].map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                                          ))}
+                                        </Pie>
+                                        <Tooltip />
+                                      </RechartsPieChart>
+                                    </ResponsiveContainer>
+                                  </div>
+
+                                  {/* Security Resources Bar Chart */}
+                                  <div className="bg-gray-800/50 rounded-lg p-4 border border-red-500/30">
+                                    <h5 className="font-semibold text-red-200 mb-3">Security Focus Areas</h5>
+                                    <ResponsiveContainer width="100%" height={160}>
+                                      <BarChart data={[
+                                        { category: 'IAM Users', risk: summary.iamUsersCount > 10 ? summary.iamUsersCount * 2 : 20, fill: '#dc2626' },
+                                        { category: 'S3 Buckets', risk: summary.s3BucketsCount > 20 ? 80 : 40, fill: '#ea580c' },
+                                        { category: 'Load Balancers', risk: summary.elbCount > 0 ? 60 : 10, fill: '#ca8a04' },
+                                        { category: 'EC2 Instances', risk: summary.totalInstancesScanned > 20 ? 70 : 30, fill: '#f97316' }
+                                      ]}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                                        <XAxis dataKey="category" tick={{ fill: '#fca5a5', fontSize: 10 }} angle={-45} textAnchor="end" height={60} />
+                                        <YAxis tick={{ fill: '#fca5a5', fontSize: 12 }} />
+                                        <Tooltip 
+                                          contentStyle={{ 
+                                            backgroundColor: '#1f2937', 
+                                            border: '1px solid #dc2626',
+                                            borderRadius: '8px',
+                                            color: '#fca5a5'
+                                          }}
+                                          formatter={(value) => [`${value}%`, 'Risk Level']}
+                                        />
+                                        <Bar dataKey="risk" fill="#dc2626" />
+                                      </BarChart>
+                                    </ResponsiveContainer>
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Performance Analysis Charts */}
+                              {insight.id === 'performance' && (
+                                <div className="space-y-4">
+                                  {/* Utilization Breakdown */}
+                                  <div className="bg-gray-800/50 rounded-lg p-4 border border-blue-500/30">
+                                    <h5 className="font-semibold text-blue-200 mb-3 flex items-center space-x-2">
+                                      <Zap className="w-4 h-4" />
+                                      <span>Resource Utilization</span>
+                                    </h5>
+                                    <ResponsiveContainer width="100%" height={200}>
+                                      <RechartsPieChart>
+                                        <Pie
+                                          data={[
+                                            { name: 'Active', value: summary.activeInstancesCount, fill: '#22c55e' },
+                                            { name: 'Idle', value: summary.idleRunningInstancesCount, fill: '#f59e0b' },
+                                            { name: 'Stopped', value: summary.stoppedInstancesCount, fill: '#6b7280' }
+                                          ]}
+                                          cx="50%"
+                                          cy="50%"
+                                          outerRadius={70}
+                                          dataKey="value"
+                                          label={({ name, value }) => `${name}: ${value}`}
+                                        >
+                                          {[{ fill: '#22c55e' }, { fill: '#f59e0b' }, { fill: '#6b7280' }].map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                                          ))}
+                                        </Pie>
+                                        <Tooltip />
+                                      </RechartsPieChart>
+                                    </ResponsiveContainer>
+                                  </div>
+
+                                  {/* Performance Metrics */}
+                                  <div className="bg-gray-800/50 rounded-lg p-4 border border-blue-500/30">
+                                    <h5 className="font-semibold text-blue-200 mb-3">Performance Optimization</h5>
+                                    <ResponsiveContainer width="100%" height={160}>
+                                      <BarChart data={[
+                                        { category: 'CPU Efficiency', score: summary.activeInstancesCount > 0 ? 85 : 40, fill: '#3b82f6' },
+                                        { category: 'Storage IOPS', score: 70, fill: '#06b6d4' },
+                                        { category: 'Network', score: summary.elbCount > 0 ? 80 : 60, fill: '#0891b2' },
+                                        { category: 'Auto Scaling', score: summary.idleRunningInstancesCount === 0 ? 90 : 30, fill: '#0284c7' }
+                                      ]}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                                        <XAxis dataKey="category" tick={{ fill: '#93c5fd', fontSize: 10 }} angle={-45} textAnchor="end" height={60} />
+                                        <YAxis tick={{ fill: '#93c5fd', fontSize: 12 }} domain={[0, 100]} />
+                                        <Tooltip 
+                                          contentStyle={{ 
+                                            backgroundColor: '#1f2937', 
+                                            border: '1px solid #3b82f6',
+                                            borderRadius: '8px',
+                                            color: '#93c5fd'
+                                          }}
+                                          formatter={(value) => [`${value}%`, 'Performance Score']}
+                                        />
+                                        <Bar dataKey="score" fill="#3b82f6" />
+                                      </BarChart>
+                                    </ResponsiveContainer>
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Compliance Review Charts */}
+                              {insight.id === 'compliance' && (
+                                <div className="space-y-4">
+                                  {/* Compliance Frameworks */}
+                                  <div className="bg-gray-800/50 rounded-lg p-4 border border-purple-500/30">
+                                    <h5 className="font-semibold text-purple-200 mb-3 flex items-center space-x-2">
+                                      <AlertTriangle className="w-4 h-4" />
+                                      <span>Compliance Status</span>
+                                    </h5>
+                                    <ResponsiveContainer width="100%" height={200}>
+                                      <BarChart data={[
+                                        { framework: 'SOC 2', score: summary.iamUsersCount < 10 ? 75 : 45, fill: '#8b5cf6' },
+                                        { framework: 'GDPR', score: summary.s3BucketsCount < 20 ? 70 : 40, fill: '#a855f7' },
+                                        { framework: 'HIPAA', score: 60, fill: '#9333ea' },
+                                        { framework: 'PCI DSS', score: summary.elbCount > 0 ? 65 : 30, fill: '#7c3aed' }
+                                      ]}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                                        <XAxis dataKey="framework" tick={{ fill: '#c4b5fd', fontSize: 10 }} />
+                                        <YAxis tick={{ fill: '#c4b5fd', fontSize: 12 }} domain={[0, 100]} />
+                                        <Tooltip 
+                                          contentStyle={{ 
+                                            backgroundColor: '#1f2937', 
+                                            border: '1px solid #8b5cf6',
+                                            borderRadius: '8px',
+                                            color: '#c4b5fd'
+                                          }}
+                                          formatter={(value) => [`${value}%`, 'Compliance Score']}
+                                        />
+                                        <Bar dataKey="score" fill="#8b5cf6" />
+                                      </BarChart>
+                                    </ResponsiveContainer>
+                                  </div>
+
+                                  {/* Critical Findings */}
+                                  <div className="bg-gray-800/50 rounded-lg p-4 border border-purple-500/30">
+                                    <h5 className="font-semibold text-purple-200 mb-3">Critical Findings</h5>
+                                    <ResponsiveContainer width="100%" height={160}>
+                                      <RechartsPieChart>
+                                        <Pie
+                                          data={[
+                                            { name: 'Encryption', value: 25, fill: '#dc2626' },
+                                            { name: 'Access Control', value: summary.iamUsersCount > 10 ? 35 : 15, fill: '#ea580c' },
+                                            { name: 'Logging', value: 40, fill: '#ca8a04' },
+                                            { name: 'Compliant', value: 30 - Math.min(summary.iamUsersCount - 5, 20), fill: '#16a34a' }
+                                          ]}
+                                          cx="50%"
+                                          cy="50%"
+                                          outerRadius={60}
+                                          dataKey="value"
+                                          label={({ name, value }) => `${name}: ${value}%`}
+                                        >
+                                          {[{ fill: '#dc2626' }, { fill: '#ea580c' }, { fill: '#ca8a04' }, { fill: '#16a34a' }].map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                                          ))}
+                                        </Pie>
+                                        <Tooltip />
+                                      </RechartsPieChart>
+                                    </ResponsiveContainer>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          
+                          {/* Analysis Footer */}
+                          <div className="mt-6 pt-4 border-t border-blue-500/20">
+                            <div className="flex items-center justify-between text-xs text-blue-300">
+                              <div className="flex items-center space-x-2">
+                                <Brain className="h-4 w-4" />
+                                <span>Generated by CloudSniper AI</span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <span>Confidence:</span>
+                                <div className="w-12 h-2 bg-blue-500/20 rounded-full overflow-hidden">
+                                  <div className="w-10 h-full bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full"></div>
+                                </div>
+                                <span>95%</span>
                               </div>
                             </div>
                           </div>
@@ -1202,6 +1224,12 @@ const ScanResults: React.FC<ScanResultsProps> = ({ scanResult }) => {
           </div>
         </div>
       )}
+
+      <AIChat 
+        scanResult={scanResult}
+        isVisible={isChatOpen}
+        onClose={handleCloseChat}
+      />
     </div>
   );
 };
