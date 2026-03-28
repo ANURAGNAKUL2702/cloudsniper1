@@ -1,6 +1,6 @@
 # CloudSniper - AWS Security & Cost Optimization Scanner
 
-## 🚀 [Live Demo deployed link: astonishing-blancmange-9cb4f0.netlify.app](https://astonishing-blancmange-9cb4f0.netlify.app)
+## 🚀 [Live Demo deployed link: https://cloudsniper-aws-scanner.surge.sh/)
 
 ![CloudSniper Logo](https://img.shields.io/badge/CloudSniper-AWS%20Security%20Scanner-blue?style=for-the-badge&logo=amazon-aws)
 
